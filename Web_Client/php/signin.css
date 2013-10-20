@@ -20,7 +20,7 @@ border:#fff 1px solid;}
   font-style: normal;
 }
 i {margin-right:1vh;}
-.social > div{
+.social > a{
   margin-top:1vh;
   display:inline-block;
   padding:5px;
@@ -33,7 +33,7 @@ i {margin-right:1vh;}
   transition:opacity 0.3s;
 }
 
-.social > div:hover {
+.social > a:hover {
   background-color: #fff;
   
   color:#aaa;
@@ -47,6 +47,7 @@ i {margin-right:1vh;}
  //text-shadow: 0 1px 3px rgba(0,0,0,.4), 0 0 30px rgba(0,0,0,.075);
 
  color:#fff;
+ background-color:#2F353E;
  background:url('bg.jpg') no-repeat center center fixed;
  -webkit-background-size: cover;
   -moz-background-size: cover;
