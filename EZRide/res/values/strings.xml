@@ -4,5 +4,15 @@
     <string name="app_name">EZRide</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="welcome">Welcome To EZRide!</string>
+    <string name="welcome_text">You have a few sign in options. You can sign in with Google+ (which will allow you to magically download your Google Calendar seamlessly), Facebook, or an EZRide account. Don\'t have an account? By signing in with Google+ or Facebook, an account will be auto-generated for you. You can always create an EZRide only account if you\'re not into the whole social networking thing.</string>
+    <string name="ezride_login_button">EZRide</string>
+    <string name="fb_login_button">Facebook</string>
+    <string name="gplus_login_button">Google+</string>
+    <string name="title_activity_ezride_login_signup">EZRideLoginSignupActivity</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="signup">Sign Up</string>
+    <string name="login">Login</string>
 
 </resources>
