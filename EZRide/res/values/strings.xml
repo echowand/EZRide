@@ -14,5 +14,25 @@
     <string name="password">Password</string>
     <string name="signup">Sign Up</string>
     <string name="login">Login</string>
+    <string name="title_activity_map">MapActivity</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <string-array name="map_view_items_array">
+        <item>Calendar</item>
+        <item>Groups</item>
+        <item>Profile</item>
+        <item>About</item>
+    </string-array>
+    
+    <string-array name="groups_view_items_array">
+        <item>Calendar</item>
+        <item>Live Map</item>
+        <item>Profile</item>
+        <item>About</item>
+    </string-array>
+
+    <string name="action_websearch">Web search</string>
+    <string name="title_activity_groups">GroupsActivity</string>
 
 </resources>

@@ -24,5 +24,10 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(this, EZRideLoginSignupActivity.class);
 		startActivity(intent);
 	}
+	
+	public void gplusLogin(View view) {
+		Intent intent = new Intent(this, GroupsActivity.class);
+		startActivity(intent);
+	}
 
 }
