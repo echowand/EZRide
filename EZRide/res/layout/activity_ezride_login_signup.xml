@@ -9,12 +9,12 @@
     tools:context=".EZRideLoginSignupActivity" >
 
     <EditText
-        android:id="@+id/ezride_enter_email"
+        android:id="@+id/ezride_enter_username"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="100"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress" >
+        android:hint="@string/username"
+        android:inputType="textNoSuggestions" >
 
         <requestFocus />
     </EditText>
@@ -47,9 +47,9 @@
         android:id="@+id/ezride_enter_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/ezride_enter_email"
-        android:layout_below="@+id/ezride_enter_email"
-        android:layout_marginTop="18dp"
+        android:layout_alignLeft="@+id/ezride_enter_username"
+        android:layout_below="@+id/ezride_enter_username"
+        android:layout_marginTop="16dp"
         android:ems="100"
         android:hint="@string/password"
         android:inputType="textPassword" />

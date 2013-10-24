@@ -10,6 +10,7 @@
     <string name="fb_login_button">Facebook</string>
     <string name="gplus_login_button">Google+</string>
     <string name="title_activity_ezride_login_signup">EZRideLoginSignupActivity</string>
+    <string name="username">Username</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <string name="signup">Sign Up</string>

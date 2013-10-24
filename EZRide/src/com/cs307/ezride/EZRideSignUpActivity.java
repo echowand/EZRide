@@ -2,11 +2,13 @@ package com.cs307.ezride;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
 
 public class EZRideSignUpActivity extends Activity {
+	private String username, password;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -14,6 +16,10 @@ public class EZRideSignUpActivity extends Activity {
 		setContentView(R.layout.activity_ezride_sign_up);
 		// Show the Up button in the action bar.
 		setupActionBar();
+		
+		Intent intent = getIntent();
+		username = intent.getStringExtra(EZRideLoginSignupActivity.USERNAME_MESSAGE);
+		password = intent.getStringExtra(EZRideLoginSignupActivity.PASSWORD_MESSAGE);
 	}
 
 	/**

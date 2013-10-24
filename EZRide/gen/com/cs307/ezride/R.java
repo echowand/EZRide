@@ -33,8 +33,8 @@ public final class R {
     public static final class id {
         public static final int action_settings=0x7f09000d;
         public static final int content_frame=0x7f090005;
-        public static final int ezride_enter_email=0x7f090000;
         public static final int ezride_enter_password=0x7f090002;
+        public static final int ezride_enter_username=0x7f090000;
         public static final int ezride_login_button=0x7f090003;
         public static final int ezride_login_screen_button=0x7f09000b;
         public static final int ezride_signup_button=0x7f090001;
@@ -67,24 +67,25 @@ public final class R {
     }
     public static final class string {
         public static final int action_settings=0x7f050001;
-        public static final int action_websearch=0x7f050010;
+        public static final int action_websearch=0x7f050011;
         public static final int app_name=0x7f050000;
-        public static final int drawer_close=0x7f05000f;
-        public static final int drawer_open=0x7f05000e;
-        public static final int email=0x7f050009;
+        public static final int drawer_close=0x7f050010;
+        public static final int drawer_open=0x7f05000f;
+        public static final int email=0x7f05000a;
         public static final int ezride_login_button=0x7f050005;
         public static final int fb_login_button=0x7f050006;
         public static final int gplus_login_button=0x7f050007;
         public static final int hello_world=0x7f050002;
-        public static final int login=0x7f05000c;
-        public static final int password=0x7f05000a;
-        public static final int signup=0x7f05000b;
-        public static final int title_activity_ezride_login=0x7f050014;
+        public static final int login=0x7f05000d;
+        public static final int password=0x7f05000b;
+        public static final int signup=0x7f05000c;
+        public static final int title_activity_ezride_login=0x7f050015;
         public static final int title_activity_ezride_login_signup=0x7f050008;
-        public static final int title_activity_ezride_sign_up=0x7f050013;
-        public static final int title_activity_groups=0x7f050011;
-        public static final int title_activity_map=0x7f05000d;
-        public static final int title_activity_profile=0x7f050012;
+        public static final int title_activity_ezride_sign_up=0x7f050014;
+        public static final int title_activity_groups=0x7f050012;
+        public static final int title_activity_map=0x7f05000e;
+        public static final int title_activity_profile=0x7f050013;
+        public static final int username=0x7f050009;
         public static final int welcome=0x7f050003;
         public static final int welcome_text=0x7f050004;
     }

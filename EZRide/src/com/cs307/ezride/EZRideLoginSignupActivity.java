@@ -2,12 +2,16 @@ package com.cs307.ezride;
 
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.support.v4.app.NavUtils;
 
 public class EZRideLoginSignupActivity extends Activity {
+	public final static String USERNAME_MESSAGE = "com.cs307.ezride.USERNAME_MESSAGE";
+	public final static String PASSWORD_MESSAGE = "com.cs307.ezride.PASSWORD_MESSAGE";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +55,14 @@ public class EZRideLoginSignupActivity extends Activity {
 	}
 	
 	public void ezrideSignUpButton_OnClick(View view) {
-		finish();
+		Intent intent = new Intent(this, EZRideSignUpActivity.class);
+		EditText username = (EditText)findViewById(R.id.ezride_enter_username);
+		EditText password = (EditText)findViewById(R.id.ezride_enter_password);
+		String message = username.getText().toString();
+		intent.putExtra(USERNAME_MESSAGE, message);
+		message = password.getText().toString();
+		intent.putExtra(PASSWORD_MESSAGE, message);
+		startActivity(intent);
 	}
 	
 	public void ezrideLoginButton_OnClick(View view) {
