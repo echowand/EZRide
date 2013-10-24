@@ -8,9 +8,39 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".EZRideSignUpActivity" >
 
-    <TextView
+    <EditText
+        android:id="@+id/ezride_enter_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:ems="100"
+        android:hint="@string/email"
+        android:inputType="textEmailAddress" />
+
+    <EditText
+        android:id="@+id/ezride_enter_bio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ezride_enter_email"
+        android:layout_below="@+id/ezride_enter_email"
+        android:layout_marginTop="18dp"
+        android:ems="100"
+        android:hint="@string/bio"
+        android:inputType="textMultiLine" />
+
+    <Button
+        android:id="@+id/ezride_register_button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/ezride_enter_bio"
+        android:layout_below="@+id/ezride_enter_bio"
+        android:layout_marginLeft="22dp"
+        android:layout_marginTop="23dp"
+        android:onClick="ezrideRegisterButton_onClick"
+        android:text="Register" />
+    
 
 </RelativeLayout>

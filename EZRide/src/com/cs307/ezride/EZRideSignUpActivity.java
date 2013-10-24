@@ -1,14 +1,24 @@
 package com.cs307.ezride;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
 public class EZRideSignUpActivity extends Activity {
-	private String username, password;
+	private String mUsername, mPassword, mEmail, mBio;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -18,10 +28,60 @@ public class EZRideSignUpActivity extends Activity {
 		setupActionBar();
 		
 		Intent intent = getIntent();
-		username = intent.getStringExtra(EZRideLoginSignupActivity.USERNAME_MESSAGE);
-		password = intent.getStringExtra(EZRideLoginSignupActivity.PASSWORD_MESSAGE);
+		mUsername = intent.getStringExtra(EZRideLoginSignupActivity.USERNAME_MESSAGE);
+		mPassword = intent.getStringExtra(EZRideLoginSignupActivity.PASSWORD_MESSAGE);
 	}
+	
+	/*
+	 * OnClick action for register button
+	 */
+	public void ezrideRegisterButton_onClick(View view){
+		EditText email = (EditText)findViewById(R.id.ezride_enter_email);
+		EditText bio = (EditText)findViewById(R.id.ezride_enter_bio);
+		mEmail = email.getText().toString();
+		mBio = bio.getText().toString();
 
+		HttpURLConnection connection;
+		OutputStreamWriter request = null;
+		
+		URL url = null;
+		String response = null;
+		String parameters = "username="+mUsername+"&password="+mPassword+"&email="+mEmail+"&profile="+mBio;
+		
+		try
+		{
+			url = new URL("http://ezride-weiqing.rhcloud.com/register.php");
+			connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            connection.setRequestMethod("POST");    
+
+            request = new OutputStreamWriter(connection.getOutputStream());
+            request.write(parameters);
+            request.flush();
+            request.close();            
+            String line = "";               
+            InputStreamReader isr = new InputStreamReader(connection.getInputStream());
+            BufferedReader reader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            while ((line = reader.readLine()) != null)
+            {
+                sb.append(line + "\n");
+            }
+            // Response from server after login process will be stored in response variable.                
+            response = sb.toString();
+            // You can perform UI operations here
+            Toast.makeText(this,"Message from Server: \n"+ response, 0).show();             
+            isr.close();
+            reader.close();
+			
+		}
+		catch (IOException e)
+		{
+			//err
+		}
+		
+	}
 	/**
 	 * Set up the {@link android.app.ActionBar}.
 	 */
