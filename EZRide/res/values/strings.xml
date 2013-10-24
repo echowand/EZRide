@@ -24,7 +24,6 @@
         <item>Profile</item>
         <item>About</item>
     </string-array>
-    
     <string-array name="groups_view_items_array">
         <item>Calendar</item>
         <item>Live Map</item>
@@ -34,5 +33,8 @@
 
     <string name="action_websearch">Web search</string>
     <string name="title_activity_groups">GroupsActivity</string>
+    <string name="title_activity_profile">ProfileActivity</string>
+    <string name="title_activity_ezride_sign_up">EZRideSignUpActivity</string>
+    <string name="title_activity_ezride_login">EZRideLoginActivity</string>
 
 </resources>

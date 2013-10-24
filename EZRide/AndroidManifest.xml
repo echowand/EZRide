@@ -38,6 +38,26 @@
             android:name="com.cs307.ezride.GroupsActivity"
             android:label="@string/title_activity_groups" >
         </activity>
+        <activity
+            android:name="com.cs307.ezride.ProfileActivity"
+            android:label="@string/title_activity_profile" >
+        </activity>
+        <activity
+            android:name="com.cs307.ezride.EZRideSignUpActivity"
+            android:label="@string/title_activity_ezride_sign_up"
+            android:parentActivityName="com.cs307.ezride.EZRideLoginSignupActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cs307.ezride.EZRideLoginSignupActivity" />
+        </activity>
+        <activity
+            android:name="com.cs307.ezride.EZRideLoginActivity"
+            android:label="@string/title_activity_ezride_login"
+            android:parentActivityName="com.cs307.ezride.EZRideLoginSignupActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cs307.ezride.EZRideLoginSignupActivity" />
+        </activity>
     </application>
 
 </manifest>
