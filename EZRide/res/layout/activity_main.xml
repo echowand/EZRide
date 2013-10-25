@@ -9,7 +9,7 @@
     tools:context=".MainActivity" >
 
     <TextView
-        android:id="@+id/textView1"
+        android:id="@+id/profile_name_label"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -20,11 +20,11 @@
         android:textSize="50sp" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/profile_email_label"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/textView1"
-        android:layout_below="@+id/textView1"
+        android:layout_alignLeft="@+id/profile_name_label"
+        android:layout_below="@+id/profile_name_label"
         android:layout_marginTop="23dp"
         android:gravity="center"
         android:text="@string/welcome_text"
@@ -36,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/fb_login_screen_button"
         android:layout_centerHorizontal="true"
-        android:text="@string/gplus_login_button"
+        android:text="@string/debug_profile_activity_button"
         android:onClick="gplusLogin"
         android:ems="10" />
 
@@ -44,10 +44,11 @@
         android:id="@+id/fb_login_screen_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView2"
+        android:layout_below="@+id/profile_email_label"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="13dp"
-        android:text="@string/fb_login_button"
+        android:text="@string/debug_groups_activity_button"
+        android:onClick="fbLogin"
         android:ems="10" />
 
     <Button

@@ -26,6 +26,11 @@ public class MainActivity extends Activity {
 	}
 	
 	public void gplusLogin(View view) {
+		Intent intent = new Intent(this, ProfileActivity.class);
+		startActivity(intent);
+	}
+	
+	public void fbLogin(View view) {
 		Intent intent = new Intent(this, GroupsActivity.class);
 		startActivity(intent);
 	}

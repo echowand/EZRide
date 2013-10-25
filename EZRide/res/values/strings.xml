@@ -38,5 +38,8 @@
     <string name="title_activity_profile">ProfileActivity</string>
     <string name="title_activity_ezride_sign_up">EZRideSignUpActivity</string>
     <string name="title_activity_ezride_login">EZRideLoginActivity</string>
+    <string name="profile_action_save">Save</string>
+    <string name="debug_profile_activity_button">Test Profile Activity</string>
+    <string name="debug_groups_activity_button">Test Groups Activity</string>
 
 </resources>

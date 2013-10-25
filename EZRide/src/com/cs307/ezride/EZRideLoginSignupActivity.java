@@ -17,17 +17,7 @@ public class EZRideLoginSignupActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ezride_login_signup);
-		// Show the Up button in the action bar.
-		setupActionBar();
-	}
-
-	/**
-	 * Set up the {@link android.app.ActionBar}.
-	 */
-	private void setupActionBar() {
-
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-
 	}
 
 	@Override
@@ -66,7 +56,14 @@ public class EZRideLoginSignupActivity extends Activity {
 	}
 	
 	public void ezrideLoginButton_OnClick(View view) {
-		finish();
+		Intent intent = new Intent(this, EZRideLoginActivity.class);
+		EditText username = (EditText)findViewById(R.id.ezride_enter_username);
+		EditText password = (EditText)findViewById(R.id.ezride_enter_password);
+		String message = username.getText().toString();
+		intent.putExtra(USERNAME_MESSAGE, message);
+		message = password.getText().toString();
+		intent.putExtra(PASSWORD_MESSAGE, message);
+		startActivity(intent);
 	}
 
 }
