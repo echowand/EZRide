@@ -8,19 +8,19 @@ import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper {
 	private SQLiteDatabase db;
-	private static final String KEY_ID = "id";
-	private static final String KEY_UNAME = "username";
-	private static final String KEY_EMAIL = "email";
-	private static final String KEY_PASS = "password";
-	private static final String KEY_BIO = "bio";
-	private static final String KEY_NAME = "name";
-	private static final String KEY_PHONE = "phonenumber";
-	private static final String KEY_ADDRESS = "address";
+	public static final String KEY_ID = "id";
+	public static final String KEY_UNAME = "username";
+	public static final String KEY_EMAIL = "email";
+	public static final String KEY_PASS = "password";
+	public static final String KEY_BIO = "bio";
+	public static final String KEY_NAME = "name";
+	public static final String KEY_PHONE = "phonenumber";
+	public static final String KEY_ADDRESS = "address";
 	
 	DBHelper DB = null;
 	private static final String DATABASE_NAME = "ezride.db";
 	private static final int DATABASE_VERSION = 1;
-	private static final String[] DATABASE_TABLE_NAMES = {"user"};
+	public static final String[] DATABASE_TABLE_NAMES = {"user"};
 	
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);

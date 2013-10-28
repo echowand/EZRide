@@ -15,16 +15,6 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_launcher" />
 
-    <EditText
-        android:id="@+id/profile_name_field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/profile_picture"
-        android:layout_alignLeft="@+id/profile_name_label"
-        android:ems="10"
-        android:inputType="textPersonName" >
-    </EditText>
-
     <TextView
         android:id="@+id/profile_email_label"
         android:layout_width="wrap_content"
@@ -101,16 +91,6 @@
         android:ems="10"
         android:inputType="textMultiLine" />
 
-    <TextView
-        android:id="@+id/profile_name_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignTop="@+id/profile_picture"
-        android:layout_marginLeft="58dp"
-        android:layout_toRightOf="@+id/profile_picture"
-        android:text="Name"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
-
     <Button
         android:id="@+id/change_password_button"
         android:layout_width="wrap_content"
@@ -150,5 +130,25 @@
         android:layout_alignTop="@+id/profile_address_field"
         android:onClick="submitButton_onClick"
         android:text="Submit" />
+
+    <TextView
+        android:id="@+id/profile_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/profile_picture"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="18dp"
+        android:layout_toRightOf="@+id/change_password_button"
+        android:text="Name"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <EditText
+        android:id="@+id/profile_name_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/profile_name_label"
+        android:layout_below="@+id/profile_name_label"
+        android:ems="10"
+        android:inputType="textPersonName" />
 
 </RelativeLayout>

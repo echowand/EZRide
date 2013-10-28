@@ -23,6 +23,7 @@ import org.apache.http.message.BasicNameValuePair;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
@@ -36,13 +37,15 @@ public class EZRideSignUpActivity extends Activity {
 	private String mUsername, mPassword, mEmail, mBio;
 	private String serverResult;
 	private List<NameValuePair> nameValPair = new ArrayList<NameValuePair>();
+	public static Context context = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_ezride_sign_up);
+		context = this.getBaseContext();
 		// Show the Up button in the action bar.
-		setupActionBar();
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		Intent intent = getIntent();
 		mUsername = intent.getStringExtra(EZRideLoginSignupActivity.USERNAME_MESSAGE);
@@ -58,58 +61,11 @@ public class EZRideSignUpActivity extends Activity {
 		mEmail = email.getText().toString();
 		mBio = bio.getText().toString();
 		
-		Toast.makeText(this, "Username: " + mUsername + "\nPassword: " + mPassword + "\nEmail: " + mEmail + "\nBio: " + mBio, Toast.LENGTH_SHORT).show();
-		finish();
-		
 		nameValPair.add(new BasicNameValuePair("username", mUsername));
 		nameValPair.add(new BasicNameValuePair("password", mPassword));
-		nameValPair.add(new BasicNameValuePair("email", mEmail));
-		nameValPair.add(new BasicNameValuePair("profile", mBio));
+		//nameValPair.add(new BasicNameValuePair("email", mEmail));
 		
-		new PostTask().execute("http://ezride-weiqing.rhcloud.com/register.php");
-		Toast.makeText(this, serverResult, Toast.LENGTH_SHORT).show();
-		finish();
-
-		/*HttpURLConnection connection;
-		OutputStreamWriter request = null;
-		
-		URL url = null;
-		String response = null;
-		String parameters = "username="+mUsername+"&password="+mPassword+"&email="+mEmail+"&profile="+mBio;
-		
-		try
-		{
-			url = new URL("ezride-weiqing.rhcloud.com/register.php");
-			connection = (HttpURLConnection) url.openConnection();
-            connection.setDoOutput(true);
-            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            connection.setRequestMethod("POST");    
-
-            request = new OutputStreamWriter(connection.getOutputStream());
-            request.write(parameters);
-            request.flush();
-            request.close();            
-            String line = "";               
-            InputStreamReader isr = new InputStreamReader(connection.getInputStream());
-            BufferedReader reader = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            while ((line = reader.readLine()) != null)
-            {
-                sb.append(line + "\n");
-            }
-            // Response from server after login process will be stored in response variable.                
-            response = sb.toString();
-            // You can perform UI operations here
-            Toast.makeText(this,"Message from Server: \n"+ response, 0).show();             
-            isr.close();
-            reader.close();
-			
-		}
-		catch (IOException e)
-		{
-			//err
-		}*/
-		
+		new PostTask().execute("http://ezride-weiqing.rhcloud.com/androidezregister.php");
 	}
 	
 	private class PostTask extends AsyncTask<String, Integer, String> {
@@ -120,14 +76,14 @@ public class EZRideSignUpActivity extends Activity {
 			String result = null;
 			try {
 				uri = new URI(params[0]);
-			} catch (URISyntaxException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
 			}
 			if (uri == null) {
 				return "f-uri";
 			}
 			HttpPost httpPost = new HttpPost(uri);
+			
 			try {
 				httpPost.setEntity(new UrlEncodedFormEntity(nameValPair));
 				HttpResponse response = httpClient.execute(httpPost);
@@ -135,12 +91,12 @@ public class EZRideSignUpActivity extends Activity {
 				StringBuilder sb = new StringBuilder();
 				String line = null;
 				
-				while ((line = reader.readLine()) != null)
+				while ((line = reader.readLine()) != null) {
 					sb.append(line + "\n");
+				}
 				result = sb.toString();
 			} catch (Exception e) {
 				e.printStackTrace();
-				//Log.d("Login", "CPE");
 			}
 			Log.d("EZRIDE_SERVER_RESULT", result);
 			return result;
@@ -148,18 +104,22 @@ public class EZRideSignUpActivity extends Activity {
 		
 		@Override
 		protected void onPostExecute(String result) {
-			serverResult = result;
-			//Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
+			if (result.contains("New")) {
+				Intent intent = new Intent(EZRideSignUpActivity.context, EZRideLoginActivity.class);
+				intent.putExtra(EZRideLoginSignupActivity.USERNAME_MESSAGE, mUsername);
+				intent.putExtra(EZRideLoginSignupActivity.PASSWORD_MESSAGE, mPassword);
+				startActivity(intent);
+				finish();
+			} else if (result.contains("query")) {
+				Log.d("EZRIDE_SIGNUP", "query failed");
+				Toast.makeText(EZRideSignUpActivity.context, "Username already exists", Toast.LENGTH_LONG).show();
+				finish();
+			} else {
+				Log.d("EZRIDE_SIGNUP", "register failed");
+				Toast.makeText(EZRideSignUpActivity.context, result, Toast.LENGTH_LONG).show();
+				finish();
+			}
 		}
-	}
-	
-	/**
-	 * Set up the {@link android.app.ActionBar}.
-	 */
-	private void setupActionBar() {
-
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-
 	}
 
 	@Override
