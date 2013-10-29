@@ -30,6 +30,7 @@ public class EZRideLoginActivity extends Activity {
 	private String mUsername, mPassword, mRealName, mEmail, mPhoneNum, mAddress, mBio;
 	public List<NameValuePair> nameValPair = new ArrayList<NameValuePair>();
 	public static Context context = null;
+	private DBHelper DB = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +40,7 @@ public class EZRideLoginActivity extends Activity {
 		// Show the Up button in the action bar.
 		//getActionBar().setDisplayHomeAsUpEnabled(true);
 		
+		DB = new DBHelper(getBaseContext());
 		Intent intent = getIntent();
 		mUsername = intent.getStringExtra(EZRideLoginSignupActivity.USERNAME_MESSAGE);
 		mPassword = intent.getStringExtra(EZRideLoginSignupActivity.PASSWORD_MESSAGE);
@@ -47,6 +49,13 @@ public class EZRideLoginActivity extends Activity {
 		nameValPair.add(new BasicNameValuePair("password", mPassword));
 		
 		new PostTask().execute("http://ezride-weiqing.rhcloud.com/androidezlogin.php");
+	}
+	
+	@Override
+	protected void onDestroy() {
+		if (DB != null)
+			DB.close();
+		super.onDestroy();
 	}
 
 	@Override
@@ -133,7 +142,6 @@ public class EZRideLoginActivity extends Activity {
 				Log.d("EZRIDE_LOGIN_USERBIO", mBio);
 				
 				
-				DBHelper DB = new DBHelper(EZRideLoginActivity.this);
 				SQLiteDatabase db = DB.getWritableDatabase();
 				ContentValues values = new ContentValues();
 				values.put(DBHelper.KEY_ID, 0);
@@ -153,13 +161,12 @@ public class EZRideLoginActivity extends Activity {
 					e.printStackTrace();
 				}
 				
+				db.close();
 				if (status != -1) {
-					DB.close();
 					Intent intent = new Intent(EZRideLoginActivity.context, ProfileActivity.class);
 					startActivity(intent);
 					finish();
 				} else {
-					DB.close();
 					Toast.makeText(EZRideLoginActivity.context, "Log in error. Please try again.", Toast.LENGTH_LONG).show();
 					finish();
 				}

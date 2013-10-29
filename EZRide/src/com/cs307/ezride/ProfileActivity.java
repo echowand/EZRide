@@ -2,8 +2,6 @@ package com.cs307.ezride;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,28 +21,26 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.PopupWindow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class ProfileActivity extends Activity {
 	public String mUsername, mPassword, mUserRealName, mUseremail, mUserphone, mUseraddress, mUserbio;
 	public List<NameValuePair> nameValPair = new ArrayList<NameValuePair>();
 	public static String serverResult = null;
-	private DBHelper DB;
+	private DBHelper DB = null;
+	public static Context context;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_profile);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+		
+		context = this.getBaseContext();
 		
 		DB = new DBHelper(getBaseContext());
 		SQLiteDatabase db = DB.getReadableDatabase();
@@ -86,6 +82,15 @@ public class ProfileActivity extends Activity {
 		editPhone.setText(mUserphone);
 		editAddress.setText(mUseraddress);
 		editBio.setText(mUserbio);
+		
+		db.close();
+	}
+	
+	@Override
+	protected void onDestroy() {
+		if (DB != null)
+			DB.close();
+		super.onDestroy();
 	}
 
 	@Override
@@ -109,6 +114,17 @@ public class ProfileActivity extends Activity {
 	}
 	
 	public boolean saveProfile() {
+		nameValPair.clear();
+		nameValPair.add(new BasicNameValuePair("username", mUsername));
+		nameValPair.add(new BasicNameValuePair("password", mPassword));
+		nameValPair.add(new BasicNameValuePair("name", mUserRealName));
+		nameValPair.add(new BasicNameValuePair("email", mUseremail));
+		nameValPair.add(new BasicNameValuePair("phonenumber", mUserphone));
+		nameValPair.add(new BasicNameValuePair("address", mUseraddress));
+		nameValPair.add(new BasicNameValuePair("profile", mUserbio));
+		
+		new PostTask().execute("http://ezride-weiqing.rhcloud.com/androidupdateuserinfo.php?");
+		
 		return true;
 	}
 	
@@ -123,14 +139,17 @@ public class ProfileActivity extends Activity {
 		EditText uname = (EditText)findViewById(R.id.profile_username);
 		mUsername = uname.getText().toString();
 		
+		nameValPair.clear();
 		nameValPair.add(new BasicNameValuePair("username", mUsername));
 		
 		new PostTask().execute("http://ezride-weiqing.rhcloud.com/androidgetuserinfo.php?");
 	}
 	
 	private class PostTask extends AsyncTask<String, Integer, String> {
+		private String[] _params;
 		@Override
 		protected String doInBackground(String... params) {
+			_params = params;
 			HttpClient httpClient = new DefaultHttpClient();
 			String result = null;
 			HttpPost httpPost = new HttpPost(params[0]);
@@ -146,7 +165,6 @@ public class ProfileActivity extends Activity {
 				result = sb.toString();
 			} catch (Exception e) {
 				e.printStackTrace();
-				//Log.d("Login", "CPE");
 			}
 			if (result == null)
 				Log.d("EZRIDE_SERVER_RESULT", "result was empty");
@@ -161,25 +179,34 @@ public class ProfileActivity extends Activity {
 				Log.d("EZRIDE_SERVER_RESULT2", "result was empty");
 			else
 				Log.d("EZRIDE_SERVER_RESULT2", result);
-			mUserRealName = result.substring(5, result.indexOf("\n"));
-			mUseremail = result.substring(result.indexOf("email") + 6, result.indexOf("\n", result.indexOf("email")));
-			mUserphone = result.substring(result.indexOf("phonenumber") + 12, result.indexOf("\n", result.indexOf("phonenumber")));
-			mUseraddress = result.substring(result.indexOf("address") + 8, result.indexOf("\n", result.indexOf("address")));
-			mUserbio = result.substring(result.indexOf("profile") + 8, result.indexOf("\n", result.indexOf("profile")));
 			
-			EditText editUserName = (EditText)findViewById(R.id.profile_username);
-			EditText editRealName = (EditText)findViewById(R.id.profile_name_field);
-			EditText editEmail = (EditText)findViewById(R.id.profile_email_field);
-			EditText editPhone = (EditText)findViewById(R.id.profile_phone_field);
-			EditText editAddress = (EditText)findViewById(R.id.profile_address_field);
-			EditText editBio = (EditText)findViewById(R.id.profile_bio_field);
-			
-			editUserName.setText(mUsername);
-			editRealName.setText(mUserRealName);
-			editEmail.setText(mUseremail);
-			editPhone.setText(mUserphone);
-			editAddress.setText(mUseraddress);
-			editBio.setText(mUserbio);
+			if (_params[0].contains("androidgetuserinfo")) {
+				mUserRealName = result.substring(5, result.indexOf("\n"));
+				mUseremail = result.substring(result.indexOf("email") + 6, result.indexOf("\n", result.indexOf("email")));
+				mUserphone = result.substring(result.indexOf("phonenumber") + 12, result.indexOf("\n", result.indexOf("phonenumber")));
+				mUseraddress = result.substring(result.indexOf("address") + 8, result.indexOf("\n", result.indexOf("address")));
+				mUserbio = result.substring(result.indexOf("profile") + 8, result.indexOf("\n", result.indexOf("profile")));
+				
+				EditText editUserName = (EditText)findViewById(R.id.profile_username);
+				EditText editRealName = (EditText)findViewById(R.id.profile_name_field);
+				EditText editEmail = (EditText)findViewById(R.id.profile_email_field);
+				EditText editPhone = (EditText)findViewById(R.id.profile_phone_field);
+				EditText editAddress = (EditText)findViewById(R.id.profile_address_field);
+				EditText editBio = (EditText)findViewById(R.id.profile_bio_field);
+				
+				editUserName.setText(mUsername);
+				editRealName.setText(mUserRealName);
+				editEmail.setText(mUseremail);
+				editPhone.setText(mUserphone);
+				editAddress.setText(mUseraddress);
+				editBio.setText(mUserbio);
+			} else if (_params[0].contains("androidupdateuserinfo")) {
+				if (result.contains("success")) {
+					Toast.makeText(ProfileActivity.context, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(ProfileActivity.context, "Profile update failed", Toast.LENGTH_SHORT).show();
+				}
+			}
 		}
 	}
 
