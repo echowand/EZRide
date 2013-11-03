@@ -85,11 +85,11 @@ else
         <div class="bs-sidebar hidden-print affix-top" role="complementary">
          
          <ul class="nav bs-sidenav">
-            <li class="side-li"><a class="active" href="#">All Groups</a></li>
+            <li class="side-li"><a href="index.php">All Groups</a></li>
             <li class="side-li"><a href="#">My Groups</a></li>
             <li class="side-li"><a href="#">Calendar</a></li>
             <li class="side-li"><a href="#">Nearby</a></li>
-            <li class="side-li"><a href="profile.php">Profile</a></li>
+            <li class="side-li"><a class="active" href="#">Profile</a></li>
             
           </ul>
 
@@ -98,21 +98,31 @@ else
 
        <div class="col-md-9">
         <div class="bs-sidebar hidden-print affix-top" role="complementary">
-          <div class="list-group my-list">
-            <a href="#" class="list-group-item">
-              <span class="badge">10</span>
-              <h4 class="list-group-item-heading">List group item heading</h4>
-              <p class="list-group-item-text">...</p>
-            </a>
-            <a href="#" class="list-group-item">
-              <h4 class="list-group-item-heading">List group item heading</h4>
-              <p class="list-group-item-text">...</p>
-            </a>
-            <a href="#" class="list-group-item">
-              <h4 class="list-group-item-heading">List group item heading</h4>
-              <p class="list-group-item-text">...</p>
-            </a>
-          </div>
+          <form role="form" style="margin-top:10px; padding:20px;" action="./ezupdateuserinfo.php" method="POST">
+            <div class="form-group">
+              <input type="hidden" name="username" value="<?php echo $row['username'];?>">
+              <label for="name">Name</label>
+              <input type="text" class="form-control" name="name" id="name" <?php if($row['name']):?>placeholder="<?php echo $row['name'];?>" value="<?php echo $row['name'];?>"<?php else:?>placeholder="Enter Name"<?php endif?>>
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" class="form-control" name="email" id="email" <?php if($row['email']):?>placeholder="<?php echo $row['email'];?>" value="<?php echo $row['email'];?>"<?php else:?>placeholder="Enter Email"<?php endif?>>
+            </div>
+            <div class="form-group">
+              <label for="address">Address</label>
+              <input type="text" class="form-control" name="address" id="address" <?php if($row['address']):?>placeholder="<?php echo $row['address'];?>" value="<?php echo $row['address'];?>"<?php else:?>placeholder="Enter Address"<?php endif?>>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="text" class="form-control" name="phonenumber" id="phone" <?php if($row['phonenumber']):?>placeholder="<?php echo $row['phonenumber'];?>" value="<?php echo $row['phonenumber'];?>"<?php else:?>placeholder="Enter Phone"<?php endif?>>
+            </div>
+            <div class="form-group">
+              <label for="description">Description</label>
+              <textarea type="field" class="form-control" name="profile" id="description" <?php if($row['profile']):?>placeholder="<?php echo $row['profile'];?>" value="<?php echo $row['profile'];?>"<?php else:?>placeholder="Enter Description"<?php endif?>></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-default">Submit</button>
+            </form>
         </div>
 
       </div>
@@ -207,3 +217,4 @@ else
       <link href="home.css" rel="stylesheet">
     <?php endif?>
 </html>
+
