@@ -9,7 +9,7 @@
     tools:context=".MainActivity" >
 
     <TextView
-        android:id="@+id/profile_name_label"
+        android:id="@+id/welcome_label"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -20,11 +20,11 @@
         android:textSize="50sp" />
 
     <TextView
-        android:id="@+id/profile_email_label"
+        android:id="@+id/welcome_message_label"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/profile_name_label"
-        android:layout_below="@+id/profile_name_label"
+        android:layout_alignLeft="@+id/welcome_label"
+        android:layout_below="@+id/welcome_label"
         android:layout_marginTop="23dp"
         android:gravity="center"
         android:text="@string/welcome_text"
@@ -44,21 +44,30 @@
         android:id="@+id/fb_login_screen_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profile_email_label"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="13dp"
-        android:text="@string/debug_groups_activity_button"
+        android:layout_alignLeft="@+id/gplus_login_screen_button"
+        android:layout_below="@+id/welcome_message_label"
+        android:ems="10"
         android:onClick="fbLogin"
-        android:ems="10" />
+        android:text="@string/debug_groups_activity_button" />
+
+    <Button
+        android:id="@+id/test_calendar_activity_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/gplus_login_screen_button"
+        android:layout_below="@+id/gplus_login_screen_button"
+        android:ems="10"
+        android:onClick="testCalendarActivity"
+        android:text="@string/debug_calendar_activity_button" />
 
     <Button
         android:id="@+id/ezride_login_screen_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/gplus_login_screen_button"
-        android:layout_centerHorizontal="true"
+        android:layout_alignLeft="@+id/test_calendar_activity_button"
+        android:layout_below="@+id/test_calendar_activity_button"
+        android:ems="10"
         android:onClick="ezrideLogin"
-        android:text="@string/ezride_login_button"
-        android:ems="10" />
+        android:text="@string/ezride_login_button" />
 
 </RelativeLayout>

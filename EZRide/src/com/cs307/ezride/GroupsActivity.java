@@ -1,112 +1,135 @@
 package com.cs307.ezride;
 
+import java.util.ArrayList;
+
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.res.Configuration;
-import android.support.v4.app.ActionBarDrawerToggle;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.widget.DrawerLayout;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
+import android.support.v4.app.NavUtils;
 
 public class GroupsActivity extends Activity {
-	private String[] mDrawerTitles;
-	private DrawerLayout mDrawerLayout;
-	private ListView mDrawerList;
-	private ActionBarDrawerToggle mDrawerToggle;
-	private CharSequence mTitle, mDrawerTitle;
+	private ArrayList<String> mGroupNamesArray;
+	private ArrayAdapter<String> mGroupNamesArrayAdapter;
+	private ListView mGroupsList;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_groups);
-		
-		mTitle = mDrawerTitle = getTitle();
-		mDrawerTitles = getResources().getStringArray(R.array.groups_view_items_array);
-		mDrawerLayout = (DrawerLayout)findViewById(R.id.groups_view_drawer_layout);
-		mDrawerList = (ListView)findViewById(R.id.left_drawer);
-		
-		mDrawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-		mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.drawer_list_item, mDrawerTitles));
-		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
-		
+		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeButtonEnabled(true);
 		
-		mDrawerToggle = new ActionBarDrawerToggle(
-				this,
-				mDrawerLayout,
-				R.drawable.ic_drawer,
-				R.string.drawer_open,
-				R.string.drawer_close
-				) {
-			public void onDrawerClosed(View view) {
-				getActionBar().setTitle(mTitle);
-			}
-			
-			public void onDrawerOpened(View drawerView) {
-				getActionBar().setTitle(mDrawerTitle);
-			}
-		};
-		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		mGroupNamesArray = new ArrayList<String>();
+		mGroupNamesArray.add("Group A");
+		mGroupNamesArray.add("Group B");
+		mGroupNamesArray.add("Group C");
 		
-		if (savedInstanceState == null)
-			selectItem(0);
+		mGroupNamesArrayAdapter = new ArrayAdapter<String>(this, R.layout.groups_item_simple, mGroupNamesArray);
+		mGroupsList = (ListView)findViewById(R.id.groups_activity_listview);
+		mGroupsList.setAdapter(mGroupNamesArrayAdapter);
+		
+		mGroupsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				Toast.makeText(getBaseContext(), "You've selected " + mGroupNamesArray.get(position), Toast.LENGTH_LONG).show();
+			}
+		});
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
 	}
 
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.groups, menu);
-		return super.onCreateOptionsMenu(menu);
+		return true;
 	}
-	
-	@Override
-	public void setTitle(CharSequence title) {
-		mTitle = title;
-		getActionBar().setTitle(mTitle);
-	}
-	
-	@Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
-    }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
-    }
-    
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-         // The action bar home/up action should open or close the drawer.
-         // ActionBarDrawerToggle will take care of this.
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        // Handle action buttons
-        switch(item.getItemId()) {
-        default:
-            return super.onOptionsItemSelected(item);
-        }
-    }
-	
-	private class DrawerItemClickListener implements ListView.OnItemClickListener {
-		@Override
-		public void onItemClick(AdapterView parent, View view, int position, long id) {
-			selectItem(position);
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			// This ID represents the Home or Up button. In the case of this
+			// activity, the Up button is shown. Use NavUtils to allow users
+			// to navigate up one level in the application structure. For
+			// more details, see the Navigation pattern on Android Design:
+			//
+			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+			//
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		case R.id.groups_action_add:
+			return onAddButtonClick();
+		case R.id.groups_action_join:
+			return onJoinButtonClick();
 		}
+		return super.onOptionsItemSelected(item);
 	}
 	
-	private void selectItem(int position) {
+	private boolean onAddButtonClick() {
+		AlertDialog.Builder popup = new AlertDialog.Builder(this);
+		final EditText input = new EditText(this);
 		
+		popup.setTitle("Add Group");
+		popup.setMessage("Enter a name for the group:");
+		popup.setView(input);
+		
+		popup.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+			}
+		});
+		
+		popup.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		
+		popup.show();
+		
+		return true;
+	}
+	
+	private boolean onJoinButtonClick() {
+		AlertDialog.Builder popup = new AlertDialog.Builder(this);
+		final EditText input = new EditText(this);
+		
+		popup.setTitle("Join Group");
+		popup.setMessage("Enter the name of the group:");
+		popup.setView(input);
+		
+		popup.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				
+			}
+		});
+		
+		popup.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.cancel();
+			}
+		});
+		
+		popup.show();
+		
+		return true;
 	}
 
 }

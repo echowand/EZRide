@@ -39,9 +39,19 @@
     <string name="title_activity_ezride_sign_up">EZRideSignUpActivity</string>
     <string name="title_activity_ezride_login">EZRideLoginActivity</string>
     <string name="profile_action_save">Save</string>
+    <string name="groups_action_add">Create</string>
+    <string name="groups_action_join">Join</string>
+    <string name="groups_action_refresh">Refresh</string>
+    <string name="groups_popup_add_name">Group Name:</string>
+    <string name="groups_popup_add_button_add">Continue</string>
+    <string name="groups_popup_add_button_clear">Clear</string>
+    <string name="groups_popup_add_button_cancel">Cancel</string>
     <string name="debug_profile_activity_button">Test Profile Activity</string>
     <string name="debug_groups_activity_button">Test Groups Activity</string>
+    <string name="debug_calendar_activity_button">Test Calendar Activity</string>
     <string name="logging_in">Logging in...</string>
     <string name="realname">Real Name</string>
+    <string name="title_activity_calendar">CalendarActivity</string>
+    <string name="title_activity_test">TestActivity</string>
 
 </resources>

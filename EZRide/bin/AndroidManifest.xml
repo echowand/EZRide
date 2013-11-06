@@ -7,9 +7,8 @@
     <uses-sdk
         android:minSdkVersion="14"
         android:targetSdkVersion="18" />
-    
-    <uses-permission
-        android:name="android.permission.INTERNET">
+
+    <uses-permission android:name="android.permission.INTERNET" >
     </uses-permission>
 
     <application
@@ -40,7 +39,11 @@
         </activity>
         <activity
             android:name="com.cs307.ezride.GroupsActivity"
-            android:label="@string/title_activity_groups" >
+            android:label="@string/title_activity_groups"
+            android:parentActivityName="com.cs307.ezride.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cs307.ezride.MainActivity" />
         </activity>
         <activity
             android:name="com.cs307.ezride.ProfileActivity"
@@ -64,6 +67,18 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.cs307.ezride.EZRideLoginSignupActivity" />
+        </activity>
+        <activity
+            android:name="com.cs307.ezride.CalendarActivity"
+            android:label="@string/title_activity_calendar"
+            android:parentActivityName="com.cs307.ezride.MainActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cs307.ezride.MainActivity" />
+        </activity>
+        <activity
+            android:name="com.cs307.ezride.TestActivity"
+            android:label="@string/title_activity_test" >
         </activity>
     </application>
 

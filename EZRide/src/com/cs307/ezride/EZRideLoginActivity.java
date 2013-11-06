@@ -28,6 +28,7 @@ import android.support.v4.app.NavUtils;
 
 public class EZRideLoginActivity extends Activity {
 	private String mUsername, mPassword, mRealName, mEmail, mPhoneNum, mAddress, mBio;
+	private int mId;
 	public List<NameValuePair> nameValPair = new ArrayList<NameValuePair>();
 	public static Context context = null;
 	private DBHelper DB = null;
@@ -130,7 +131,8 @@ public class EZRideLoginActivity extends Activity {
 				}
 				
 				Log.d("EZRIDE_LOGIN_USERINFO", userinfo);
-				mRealName = userinfo.substring(5, userinfo.indexOf("\n"));
+				mId = Integer.parseInt(userinfo.substring(3, userinfo.indexOf("\n")));
+				mRealName = userinfo.substring(userinfo.indexOf("name") + 5, userinfo.indexOf("\n", userinfo.indexOf("name")));
 				mEmail = userinfo.substring(userinfo.indexOf("email") + 6, userinfo.indexOf("\n", userinfo.indexOf("email")));
 				mPhoneNum = userinfo.substring(userinfo.indexOf("phonenumber") + 12, userinfo.indexOf("\n", userinfo.indexOf("phonenumber")));
 				mAddress = userinfo.substring(userinfo.indexOf("address") + 8, userinfo.indexOf("\n", userinfo.indexOf("address")));
@@ -144,7 +146,7 @@ public class EZRideLoginActivity extends Activity {
 				
 				SQLiteDatabase db = DB.getWritableDatabase();
 				ContentValues values = new ContentValues();
-				values.put(DBHelper.KEY_ID, 0);
+				values.put(DBHelper.KEY_ID, mId);
 				values.put(DBHelper.KEY_UNAME, mUsername);
 				values.put(DBHelper.KEY_PASS, mPassword);
 				values.put(DBHelper.KEY_NAME, mRealName);
