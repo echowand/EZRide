@@ -39,13 +39,23 @@ public class GroupDataSource {
 		values.put(GroupTable.COLUMN_NAME, name);
 		values.put(GroupTable.COLUMN_DATECREATED, datecreated);
 		
-		long insertId = database.insert(GroupTable.TABLE_GROUP, null, values);
-		Cursor cursor = database.query(GroupTable.TABLE_GROUP, allColumns, GroupTable.COLUMN_ID + " = " + insertId, null, null, null, null);
+		long insertId = database.insert(GroupTable.TABLE_NAME, null, values);
+		Cursor cursor = database.query(GroupTable.TABLE_NAME, allColumns, GroupTable.COLUMN_ID + " = " + insertId, null, null, null, null);
 		cursor.moveToFirst();
 		
 		Group group = CursorToGroup(cursor);
 		cursor.close();
 		return group;
+	}
+	
+	public int updateGroup(Group group) {
+		ContentValues values = new ContentValues();
+		values.put(GroupTable.COLUMN_NAME, group.getName());
+		values.put(GroupTable.COLUMN_DATECREATED, group.getDateCreated());
+		
+		String whereClause = GroupTable.COLUMN_ID + "=?";
+		String[] whereArgs = { Integer.toString(group.getId()) };
+		return database.update(GroupTable.TABLE_NAME, values, whereClause, whereArgs);
 	}
 	
 	/**
@@ -55,7 +65,7 @@ public class GroupDataSource {
 	 */
 	public void deleteGroup(Group group) {
 		int id = group.getId();
-		database.delete(GroupTable.TABLE_GROUP, UserTable.COLUMN_ID + " = " + id, null);
+		database.delete(GroupTable.TABLE_NAME, UserTable.COLUMN_ID + " = " + id, null);
 		Log.w(UserTable.class.getName(), "Group deleted with id: " + id);
 	}
 	
@@ -67,7 +77,7 @@ public class GroupDataSource {
 	public Group[] getGroups() {
 		Cursor cursor = null;
 		try {
-			cursor = database.query(GroupTable.TABLE_GROUP, null, null, null, null, null, null);
+			cursor = database.query(GroupTable.TABLE_NAME, null, null, null, null, null, null);
 		} catch (NullPointerException e) {
 			Log.e("EZRIDE_DATABASE_ERROR", "Retrieving user failed.");
 			return null;

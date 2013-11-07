@@ -8,7 +8,6 @@ public class DBHelper extends SQLiteOpenHelper {
 	
 	private static final String DATABASE_NAME = "ezride.db";
 	private static final int DATABASE_VERSION = 1;
-	public static final String[] DATABASE_TABLE_NAMES = {UserTable.TABLE_USER, GroupTable.TABLE_GROUP};
 	
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);

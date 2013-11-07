@@ -4,8 +4,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 public class UserTable {
-	public static final String TABLE_USER = "user";
-	public static final String COLUMN_ID = "id";
+	public static final String TABLE_NAME = "user";
+	public static final String COLUMN_ID = "userid";
 	public static final String COLUMN_USERNAME = "username";
 	public static final String COLUMN_PASSWORD = "password";
 	public static final String COLUMN_REALNAME = "realname";
@@ -15,7 +15,7 @@ public class UserTable {
 	public static final String COLUMN_BIO = "bio";
 	
 	private static final String DATABASE_CREATE = "CREATE TABLE "
-			+ TABLE_USER + "("
+			+ TABLE_NAME + "("
 			+ COLUMN_ID + " INTEGER PRIMARY KEY, "
 			+ COLUMN_USERNAME + " TEXT, "
 			+ COLUMN_PASSWORD + " TEXT, "
@@ -27,15 +27,25 @@ public class UserTable {
 			+ ");";
 	
 	public static void onCreate(SQLiteDatabase db) {
-		db.execSQL(DATABASE_CREATE);
-		Log.w(UserTable.class.getName(), TABLE_USER + " table created.");
+		db.beginTransaction();
+		try {
+			db.execSQL(DATABASE_CREATE);
+			db.yieldIfContendedSafely();
+			db.setTransactionSuccessful();
+		} catch (Exception e) {
+			Log.e(GroupTable.class.getName(), "SQL Error.");
+			e.printStackTrace();
+		} finally {
+			db.endTransaction();
+		}
+		Log.w(UserTable.class.getName(), TABLE_NAME + " table created.");
 	}
 	
 	public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		Log.w(UserTable.class.getName(), "Upgrading database from version "
 				+ oldVersion + " to " + newVersion
 				+ ", which will destroy all data.");
-		db.execSQL("DROP TABLE IF EXISTS " + TABLE_USER);
+		db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
 		onCreate(db);
 	}
 }

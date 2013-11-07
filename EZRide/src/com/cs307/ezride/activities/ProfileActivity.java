@@ -75,7 +75,8 @@ public class ProfileActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 		case R.id.profile_action_save:
-			return saveProfile();
+			saveProfile();
+			return false;
 		case android.R.id.home:
 			NavUtils.navigateUpFromSameTask(this);
 			return true;
@@ -84,8 +85,9 @@ public class ProfileActivity extends Activity {
 		}
 	}
 	
-	public boolean saveProfile() {
+	public void saveProfile() {
 		RequestParams params = new RequestParams();
+		
 		EditText editRealName = (EditText)findViewById(R.id.profile_name_field);
 		EditText editEmail = (EditText)findViewById(R.id.profile_email_field);
 		EditText editPhone = (EditText)findViewById(R.id.profile_phone_field);
@@ -100,32 +102,40 @@ public class ProfileActivity extends Activity {
 		params.put("address", editAddress.getText().toString());
 		params.put("profile", editBio.getText().toString());
 		
-		AsyncHttpClient client = new AsyncHttpClient();
-		client.post("http://ezride-weiqing.rhcloud.com/androidupdateuserinfo.php", params, new AsyncHttpResponseHandler() {
-			@Override
-			public void onStart() {
-				super.onStart();
-			}
-			
-			@Override
-			public void onSuccess(int statusCode, org.apache.http.Header[] headers, byte[] responseBody) {
-				String response = new String(responseBody);
-				Log.d("EZRIDE_SERVER_RESULT", response);
+		user.setRealname(editRealName.getText().toString());
+		user.setEmail(editEmail.getText().toString());
+		user.setPhone(editPhone.getText().toString());
+		user.setAddress(editAddress.getText().toString());
+		user.setBio(editBio.getText().toString());
+		
+		if (datasource.updateUser(user) > 0) {
+			AsyncHttpClient client = new AsyncHttpClient();
+			client.post("http://ezride-weiqing.rhcloud.com/androidupdateuserinfo.php", params, new AsyncHttpResponseHandler() {
+				@Override
+				public void onStart() {
+					super.onStart();
+				}
 				
-				if (response.contains("success")) {
-					Toast.makeText(getBaseContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
-				} else {
+				@Override
+				public void onSuccess(int statusCode, org.apache.http.Header[] headers, byte[] responseBody) {
+					String response = new String(responseBody);
+					Log.d("EZRIDE_SERVER_RESULT", response);
+					
+					if (response.contains("success")) {
+						Toast.makeText(getBaseContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
+					} else {
+						Toast.makeText(getBaseContext(), "Profile update failed", Toast.LENGTH_SHORT).show();
+					}
+				}
+				
+				@Override
+				public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
 					Toast.makeText(getBaseContext(), "Profile update failed", Toast.LENGTH_SHORT).show();
 				}
-			}
-			
-			@Override
-			public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
-				Toast.makeText(getBaseContext(), "Profile update failed", Toast.LENGTH_SHORT).show();
-			}
-		});
-		
-		return true;
+			});
+		} else {
+			Toast.makeText(getBaseContext(), "Profile update failed", Toast.LENGTH_SHORT).show();
+		}
 	}
 	
 	public void changePasswordButton_onClick(View view) {

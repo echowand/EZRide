@@ -55,13 +55,34 @@ public class UserDataSource {
 		values.put(UserTable.COLUMN_ADDRESS, address);
 		values.put(UserTable.COLUMN_BIO, bio);
 		
-		long insertId = database.insert(UserTable.TABLE_USER, null, values);
-		Cursor cursor = database.query(UserTable.TABLE_USER, allColumns, UserTable.COLUMN_ID + " = " + insertId, null, null, null, null);
+		long insertId = database.insert(UserTable.TABLE_NAME, null, values);
+		Cursor cursor = database.query(UserTable.TABLE_NAME, allColumns, UserTable.COLUMN_ID + " = " + insertId, null, null, null, null);
 		cursor.moveToFirst();
 		
 		User user = CursorToUser(cursor);
 		cursor.close();
 		return user;
+	}
+	
+	/**
+	 * Updates the user's info in the database. 
+	 *
+	 * @param	user	the User to be deleted.
+	 * @return			0 if the user was not successfully updated, >0 otherwise.
+	 */
+	public int updateUser(User user) {
+		ContentValues values = new ContentValues();
+		values.put(UserTable.COLUMN_USERNAME, user.getUsername());
+		values.put(UserTable.COLUMN_PASSWORD, user.getPassword());
+		values.put(UserTable.COLUMN_REALNAME, user.getRealname());
+		values.put(UserTable.COLUMN_EMAIL, user.getEmail());
+		values.put(UserTable.COLUMN_PHONE, user.getPhone());
+		values.put(UserTable.COLUMN_ADDRESS, user.getAddress());
+		values.put(UserTable.COLUMN_BIO, user.getBio());
+		
+		String whereClause = UserTable.COLUMN_ID + "=?";
+		String[] whereArgs = { Integer.toString(user.getId()) };
+		return database.update(UserTable.TABLE_NAME, values, whereClause, whereArgs);
 	}
 	
 	/**
@@ -71,7 +92,7 @@ public class UserDataSource {
 	 */
 	public void deleteUser(User user) {
 		int id = user.getId();
-		database.delete(UserTable.TABLE_USER, UserTable.COLUMN_ID + " = " + id, null);
+		database.delete(UserTable.TABLE_NAME, UserTable.COLUMN_ID + " = " + id, null);
 		Log.w(UserTable.class.getName(), "User deleted with id: " + id);
 	}
 	
@@ -83,7 +104,7 @@ public class UserDataSource {
 	public User getUser() {
 		Cursor cursor = null;
 		try {
-			cursor = database.query(UserTable.TABLE_USER, null, null, null, null, null, null);
+			cursor = database.query(UserTable.TABLE_NAME, null, null, null, null, null, null);
 		} catch (NullPointerException e) {
 			Log.e("EZRIDE_DATABASE_ERROR", "Retrieving user failed.");
 			return null;

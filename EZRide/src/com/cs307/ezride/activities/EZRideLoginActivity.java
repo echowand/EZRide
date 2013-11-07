@@ -1,8 +1,7 @@
 package com.cs307.ezride.activities;
 
 import com.cs307.ezride.R;
-import com.cs307.ezride.database.User;
-import com.cs307.ezride.database.UserDataSource;
+import com.cs307.ezride.database.*;
 import com.loopj.android.http.*;
 
 import android.os.Bundle;
@@ -19,7 +18,8 @@ public class EZRideLoginActivity extends Activity {
 	private String mUsername, mPassword, mRealName, mEmail, mPhoneNum, mAddress, mBio;
 	private int mId;
 	public static Context context = null;
-	private UserDataSource datasource = null;
+	private UserDataSource userdatasource = null;
+	private GroupDataSource groupdatasource = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,8 +29,10 @@ public class EZRideLoginActivity extends Activity {
 		// Show the Up button in the action bar.
 		//getActionBar().setDisplayHomeAsUpEnabled(true);
 		
-		datasource = new UserDataSource(this);
-		datasource.open();
+		userdatasource = new UserDataSource(this);
+		groupdatasource = new GroupDataSource(this);
+		userdatasource.open();
+		groupdatasource.open();
 		
 		Intent intent = getIntent();
 		mUsername = intent.getStringExtra(EZRideLoginSignupActivity.USERNAME_MESSAGE);
@@ -64,14 +66,14 @@ public class EZRideLoginActivity extends Activity {
 					mBio = response.substring(response.indexOf("profile") + 8, response.indexOf("\n", response.indexOf("profile")));
 					Log.d("EZRIDE_SERVER_RESULT", mId + "\n" + mRealName + "\n" + mEmail + "\n" + mPhoneNum + "\n" + mAddress + "\n" + mBio);
 					
-					User retuser = datasource.createUser(mId, mUsername, mPassword, mRealName, mEmail, mPhoneNum, mAddress, mBio);
+					User retuser = userdatasource.createUser(mId, mUsername, mPassword, mRealName, mEmail, mPhoneNum, mAddress, mBio);
 					
 					if (retuser != null) {
 						Intent intent = new Intent(EZRideLoginActivity.context, ProfileActivity.class);
 						startActivity(intent);
 						finish();
 					} else {
-						Toast.makeText(EZRideLoginActivity.context, "Log in error. Please try again.", Toast.LENGTH_LONG).show();
+						Toast.makeText(getBaseContext(), "Log in error. Please try again.", Toast.LENGTH_LONG).show();
 						finish();
 					}
 				}
@@ -82,12 +84,47 @@ public class EZRideLoginActivity extends Activity {
 				
 			}
 		});
+		
+		client.post("http://ezride-weiqing.rhcloud.com/androidgetusergroups.php", params, new AsyncHttpResponseHandler() {
+			@Override
+			public void onStart() {
+				super.onStart();
+			}
+			
+			@Override
+			public void onSuccess(int statusCode, org.apache.http.Header[] headers, byte[] responseBody) {
+				String response = new String(responseBody);
+				Log.d("EZRIDE_SERVER_RESULT", response);
+				
+				int numgroups = Integer.parseInt(response.substring(10, response.indexOf("\n")));
+				int groupidindex = response.indexOf("groupid");
+				for (int i = 0;i < numgroups;i++) {
+					int g_id = Integer.parseInt(response.substring(groupidindex + 8, response.indexOf("\n", groupidindex)));
+					String g_name = response.substring(response.indexOf("name", groupidindex) + 5, response.indexOf("\n", response.indexOf("name", groupidindex)));
+					String g_datecreated = response.substring(response.indexOf("datecreated", groupidindex) + 12, response.indexOf("\n", response.indexOf("datecreated", groupidindex)));
+					groupidindex = (response.indexOf("\n", response.indexOf("datecreated", groupidindex)) + 1);
+					
+					if (groupdatasource.createGroup(g_id, g_name, g_datecreated) == null) {
+						Toast.makeText(getBaseContext(), "Refresh failed. Please try again.", Toast.LENGTH_LONG).show();
+						break;
+					}
+				}
+			}
+			
+			@Override
+			public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
+				String response = new String(responseBody);
+				Log.d("EZRIDE_SERVER_RESULT", response);
+			}
+		});
 	}
 	
 	@Override
 	protected void onDestroy() {
-		if (datasource != null)
-			datasource.close();
+		if (userdatasource != null)
+			userdatasource.close();
+		if (groupdatasource != null)
+			groupdatasource.close();
 		super.onDestroy();
 	}
 
