@@ -1,24 +1,9 @@
 package com.cs307.ezride;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
+import com.loopj.android.http.*;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Context;
-import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.support.v4.app.NavUtils;
 import android.util.Log;
 import android.view.Menu;
@@ -29,10 +14,8 @@ import android.widget.Toast;
 
 public class ProfileActivity extends Activity {
 	public String mUsername, mPassword, mUserRealName, mUseremail, mUserphone, mUseraddress, mUserbio;
-	public List<NameValuePair> nameValPair = new ArrayList<NameValuePair>();
-	public static String serverResult = null;
-	private DBHelper DB = null;
-	public static Context context;
+	private UserDataSource datasource = null;
+	private User user = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,56 +23,41 @@ public class ProfileActivity extends Activity {
 		setContentView(R.layout.activity_profile);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
-		context = this.getBaseContext();
+		datasource = new UserDataSource(this);
+		datasource.open();
+		user = datasource.getUser();
 		
-		DB = new DBHelper(getBaseContext());
-		SQLiteDatabase db = DB.getReadableDatabase();
-		Cursor cursor = null;
+		//Log.d("EZRIDE_USER", user.toString());
 		
-		try {
-			cursor = db.query(DBHelper.DATABASE_TABLE_NAMES[0], null, null, null, null, null, null);
-		} catch (Exception e) {
-			e.printStackTrace();
+		if (user != null) {
+			mUsername = user.getUsername();
+			mPassword = user.getPassword();
+			mUserRealName = user.getRealname();
+			mUseremail = user.getEmail();
+			mUserphone = user.getPhone();
+			mUseraddress = user.getAddress();
+			mUserbio = user.getBio();
+			
+			EditText editUserName = (EditText)findViewById(R.id.profile_username);
+			EditText editRealName = (EditText)findViewById(R.id.profile_name_field);
+			EditText editEmail = (EditText)findViewById(R.id.profile_email_field);
+			EditText editPhone = (EditText)findViewById(R.id.profile_phone_field);
+			EditText editAddress = (EditText)findViewById(R.id.profile_address_field);
+			EditText editBio = (EditText)findViewById(R.id.profile_bio_field);
+			
+			editUserName.setText(mUsername);
+			editRealName.setText(mUserRealName);
+			editEmail.setText(mUseremail);
+			editPhone.setText(mUserphone);
+			editAddress.setText(mUseraddress);
+			editBio.setText(mUserbio);
 		}
-		if (cursor != null)
-			cursor.moveToFirst();
-		
-		mUsername = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_UNAME));
-		mPassword = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_PASS));
-		mUserRealName = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_NAME));
-		mUseremail = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_EMAIL));
-		mUserphone = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_PHONE));
-		mUseraddress = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_ADDRESS));
-		mUserbio = cursor.getString(cursor.getColumnIndex(DBHelper.KEY_BIO));
-		/*Log.d("EZRIDE_PROFILE_USERNAME", mUsername);
-		Log.d("EZRIDE_PROFILE_PASSWORD", mPassword);
-		Log.d("EZRIDE_PROFILE_REALNAME", mUserRealName);
-		Log.d("EZRIDE_PROFILE_EMAIL", mUseremail);
-		Log.d("EZRIDE_PROFILE_PHONE", mUserphone);
-		Log.d("EZRIDE_PROFILE_ADDRESS", mUseraddress);
-		Log.d("EZRIDE_PROFILE_BIO", mUserbio);*/
-		
-		EditText editUserName = (EditText)findViewById(R.id.profile_username);
-		EditText editRealName = (EditText)findViewById(R.id.profile_name_field);
-		EditText editEmail = (EditText)findViewById(R.id.profile_email_field);
-		EditText editPhone = (EditText)findViewById(R.id.profile_phone_field);
-		EditText editAddress = (EditText)findViewById(R.id.profile_address_field);
-		EditText editBio = (EditText)findViewById(R.id.profile_bio_field);
-		
-		editUserName.setText(mUsername);
-		editRealName.setText(mUserRealName);
-		editEmail.setText(mUseremail);
-		editPhone.setText(mUserphone);
-		editAddress.setText(mUseraddress);
-		editBio.setText(mUserbio);
-		
-		db.close();
 	}
 	
 	@Override
 	protected void onDestroy() {
-		if (DB != null)
-			DB.close();
+		if (datasource != null)
+			datasource.close();
 		super.onDestroy();
 	}
 
@@ -114,16 +82,45 @@ public class ProfileActivity extends Activity {
 	}
 	
 	public boolean saveProfile() {
-		nameValPair.clear();
-		nameValPair.add(new BasicNameValuePair("username", mUsername));
-		nameValPair.add(new BasicNameValuePair("password", mPassword));
-		nameValPair.add(new BasicNameValuePair("name", mUserRealName));
-		nameValPair.add(new BasicNameValuePair("email", mUseremail));
-		nameValPair.add(new BasicNameValuePair("phonenumber", mUserphone));
-		nameValPair.add(new BasicNameValuePair("address", mUseraddress));
-		nameValPair.add(new BasicNameValuePair("profile", mUserbio));
+		RequestParams params = new RequestParams();
+		EditText editRealName = (EditText)findViewById(R.id.profile_name_field);
+		EditText editEmail = (EditText)findViewById(R.id.profile_email_field);
+		EditText editPhone = (EditText)findViewById(R.id.profile_phone_field);
+		EditText editAddress = (EditText)findViewById(R.id.profile_address_field);
+		EditText editBio = (EditText)findViewById(R.id.profile_bio_field);
 		
-		new PostTask().execute("http://ezride-weiqing.rhcloud.com/androidupdateuserinfo.php?");
+		params.put("username", mUsername);
+		params.put("password", mPassword);
+		params.put("name", editRealName.getText().toString());
+		params.put("email", editEmail.getText().toString());
+		params.put("phonenumber", editPhone.getText().toString());
+		params.put("address", editAddress.getText().toString());
+		params.put("profile", editBio.getText().toString());
+		
+		AsyncHttpClient client = new AsyncHttpClient();
+		client.post("http://ezride-weiqing.rhcloud.com/androidupdateuserinfo.php", params, new AsyncHttpResponseHandler() {
+			@Override
+			public void onStart() {
+				super.onStart();
+			}
+			
+			@Override
+			public void onSuccess(int statusCode, org.apache.http.Header[] headers, byte[] responseBody) {
+				String response = new String(responseBody);
+				Log.d("EZRIDE_SERVER_RESULT", response);
+				
+				if (response.contains("success")) {
+					Toast.makeText(getBaseContext(), "Profile updated successfully", Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(getBaseContext(), "Profile update failed", Toast.LENGTH_SHORT).show();
+				}
+			}
+			
+			@Override
+			public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
+				Toast.makeText(getBaseContext(), "Profile update failed", Toast.LENGTH_SHORT).show();
+			}
+		});
 		
 		return true;
 	}
@@ -139,75 +136,43 @@ public class ProfileActivity extends Activity {
 		EditText uname = (EditText)findViewById(R.id.profile_username);
 		mUsername = uname.getText().toString();
 		
-		nameValPair.clear();
-		nameValPair.add(new BasicNameValuePair("username", mUsername));
+		RequestParams params = new RequestParams();
+		params.put("username", mUsername);
 		
-		new PostTask().execute("http://ezride-weiqing.rhcloud.com/androidgetuserinfo.php?");
-	}
-	
-	private class PostTask extends AsyncTask<String, Integer, String> {
-		private String[] _params;
-		@Override
-		protected String doInBackground(String... params) {
-			_params = params;
-			HttpClient httpClient = new DefaultHttpClient();
-			String result = null;
-			HttpPost httpPost = new HttpPost(params[0]);
-			try {
-				httpPost.setEntity(new UrlEncodedFormEntity(nameValPair));
-				HttpResponse response = httpClient.execute(httpPost);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-				StringBuilder sb = new StringBuilder();
-				String line = null;
-				
-				while ((line = reader.readLine()) != null)
-					sb.append(line + "\n");
-				result = sb.toString();
-			} catch (Exception e) {
-				e.printStackTrace();
+		AsyncHttpClient client = new AsyncHttpClient();
+		client.post("http://ezride-weiqing.rhcloud.com/androidgetuserinfo.php", params, new AsyncHttpResponseHandler() {
+			@Override
+			public void onStart() {
+				super.onStart();
 			}
-			if (result == null)
-				Log.d("EZRIDE_SERVER_RESULT", "result was empty");
-			else
-				Log.d("EZRIDE_SERVER_RESULT", result);
-			return result;
-		}
-		
-		@Override
-		protected void onPostExecute(String result) {
-			if (result == null)
-				Log.d("EZRIDE_SERVER_RESULT2", "result was empty");
-			else
-				Log.d("EZRIDE_SERVER_RESULT2", result);
 			
-			if (_params[0].contains("androidgetuserinfo")) {
-				mUserRealName = result.substring(5, result.indexOf("\n"));
-				mUseremail = result.substring(result.indexOf("email") + 6, result.indexOf("\n", result.indexOf("email")));
-				mUserphone = result.substring(result.indexOf("phonenumber") + 12, result.indexOf("\n", result.indexOf("phonenumber")));
-				mUseraddress = result.substring(result.indexOf("address") + 8, result.indexOf("\n", result.indexOf("address")));
-				mUserbio = result.substring(result.indexOf("profile") + 8, result.indexOf("\n", result.indexOf("profile")));
+			@Override
+			public void onSuccess(int statusCode, org.apache.http.Header[] headers, byte[] responseBody) {
+				String response = new String(responseBody);
+				Log.d("EZRIDE_SERVER_RESULT", response);
 				
-				EditText editUserName = (EditText)findViewById(R.id.profile_username);
-				EditText editRealName = (EditText)findViewById(R.id.profile_name_field);
-				EditText editEmail = (EditText)findViewById(R.id.profile_email_field);
-				EditText editPhone = (EditText)findViewById(R.id.profile_phone_field);
-				EditText editAddress = (EditText)findViewById(R.id.profile_address_field);
-				EditText editBio = (EditText)findViewById(R.id.profile_bio_field);
-				
-				editUserName.setText(mUsername);
-				editRealName.setText(mUserRealName);
-				editEmail.setText(mUseremail);
-				editPhone.setText(mUserphone);
-				editAddress.setText(mUseraddress);
-				editBio.setText(mUserbio);
-			} else if (_params[0].contains("androidupdateuserinfo")) {
-				if (result.contains("success")) {
-					Toast.makeText(ProfileActivity.context, "Profile updated successfully", Toast.LENGTH_SHORT).show();
+				if(response.contains("fail to find user")) {
+					Toast.makeText(getBaseContext(), "User does not exist", Toast.LENGTH_LONG).show();
 				} else {
-					Toast.makeText(ProfileActivity.context, "Profile update failed", Toast.LENGTH_SHORT).show();
+					EditText editRealName = (EditText)findViewById(R.id.profile_name_field);
+					EditText editEmail = (EditText)findViewById(R.id.profile_email_field);
+					EditText editPhone = (EditText)findViewById(R.id.profile_phone_field);
+					EditText editAddress = (EditText)findViewById(R.id.profile_address_field);
+					EditText editBio = (EditText)findViewById(R.id.profile_bio_field);
+				
+					editRealName.setText(response.substring(5, response.indexOf("\n")));
+					editEmail.setText(response.substring(response.indexOf("email") + 6, response.indexOf("\n", response.indexOf("email"))));
+					editPhone.setText(response.substring(response.indexOf("phonenumber") + 12, response.indexOf("\n", response.indexOf("phonenumber"))));
+					editAddress.setText(response.substring(response.indexOf("address") + 8, response.indexOf("\n", response.indexOf("address"))));
+					editBio.setText(response.substring(response.indexOf("profile") + 8, response.indexOf("\n", response.indexOf("profile"))));
 				}
 			}
-		}
+			
+			@Override
+			public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
+				String response = new String(responseBody);
+				Toast.makeText(getBaseContext(), "Refreshing failed. The response was: " + response, Toast.LENGTH_LONG).show();
+			}
+		});
 	}
-
 }

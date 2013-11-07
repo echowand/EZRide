@@ -1,26 +1,7 @@
 package com.cs307.ezride;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import com.loopj.android.http.*;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Context;
@@ -35,8 +16,6 @@ import android.support.v4.app.NavUtils;
 
 public class EZRideSignUpActivity extends Activity {
 	private String mUsername, mPassword, mEmail, mBio;
-	private String serverResult;
-	private List<NameValuePair> nameValPair = new ArrayList<NameValuePair>();
 	public static Context context = null;
 
 	@Override
@@ -61,65 +40,46 @@ public class EZRideSignUpActivity extends Activity {
 		mEmail = email.getText().toString();
 		mBio = bio.getText().toString();
 		
-		nameValPair.add(new BasicNameValuePair("username", mUsername));
-		nameValPair.add(new BasicNameValuePair("password", mPassword));
-		//nameValPair.add(new BasicNameValuePair("email", mEmail));
+		RequestParams params = new RequestParams();
+		params.put("username", mUsername);
+		params.put("password", mPassword);
+		params.put("email", mEmail);
+		params.put("profile", mBio);
 		
-		new PostTask().execute("http://ezride-weiqing.rhcloud.com/androidezregister.php");
-	}
-	
-	private class PostTask extends AsyncTask<String, Integer, String> {
-		@Override
-		protected String doInBackground(String... params) {
-			HttpClient httpClient = new DefaultHttpClient();
-			URI uri = null;
-			String result = null;
-			try {
-				uri = new URI(params[0]);
-			} catch (URISyntaxException e) {
-				e.printStackTrace();
+		AsyncHttpClient client = new AsyncHttpClient();
+		client.post("http://ezride-weiqing.rhcloud.com/androidezregister.php", params, new AsyncHttpResponseHandler() {
+			@Override
+			public void onStart() {
+				super.onStart();
 			}
-			if (uri == null) {
-				return "f-uri";
-			}
-			HttpPost httpPost = new HttpPost(uri);
 			
-			try {
-				httpPost.setEntity(new UrlEncodedFormEntity(nameValPair));
-				HttpResponse response = httpClient.execute(httpPost);
-				BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-				StringBuilder sb = new StringBuilder();
-				String line = null;
+			@Override
+			public void onSuccess(int statusCode, org.apache.http.Header[] headers, byte[] responseBody) {
+				String response = new String(responseBody);
+				Log.d("EZRIDE_SERVER_RESULT", response);
 				
-				while ((line = reader.readLine()) != null) {
-					sb.append(line + "\n");
+				if (response.contains("New user added")) {
+					Intent intent = new Intent(EZRideSignUpActivity.context, EZRideLoginActivity.class);
+					intent.putExtra(EZRideLoginSignupActivity.USERNAME_MESSAGE, mUsername);
+					intent.putExtra(EZRideLoginSignupActivity.PASSWORD_MESSAGE, mPassword);
+					startActivity(intent);
+					finish();
+				} else if (response.contains("query")) {
+					Log.d("EZRIDE_SIGNUP", "query failed");
+					Toast.makeText(getBaseContext(), "Username already exists", Toast.LENGTH_LONG).show();
+					finish();
+				} else {
+					Log.d("EZRIDE_SIGNUP", "register failed");
+					Toast.makeText(getBaseContext(), response, Toast.LENGTH_LONG).show();
+					finish();
 				}
-				result = sb.toString();
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
-			Log.d("EZRIDE_SERVER_RESULT", result);
-			return result;
-		}
-		
-		@Override
-		protected void onPostExecute(String result) {
-			if (result.contains("New")) {
-				Intent intent = new Intent(EZRideSignUpActivity.context, EZRideLoginActivity.class);
-				intent.putExtra(EZRideLoginSignupActivity.USERNAME_MESSAGE, mUsername);
-				intent.putExtra(EZRideLoginSignupActivity.PASSWORD_MESSAGE, mPassword);
-				startActivity(intent);
-				finish();
-			} else if (result.contains("query")) {
-				Log.d("EZRIDE_SIGNUP", "query failed");
-				Toast.makeText(EZRideSignUpActivity.context, "Username already exists", Toast.LENGTH_LONG).show();
-				finish();
-			} else {
-				Log.d("EZRIDE_SIGNUP", "register failed");
-				Toast.makeText(EZRideSignUpActivity.context, result, Toast.LENGTH_LONG).show();
-				finish();
+			
+			@Override
+			public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
+				Toast.makeText(getBaseContext(), "Registration failed", Toast.LENGTH_SHORT).show();
 			}
-		}
+		});
 	}
 
 	@Override

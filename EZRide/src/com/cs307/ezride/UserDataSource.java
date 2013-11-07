@@ -31,6 +31,18 @@ public class UserDataSource {
 		dbHelper.close();
 	}
 	
+	/**
+	 * Creates a user in the database. 
+	 *
+	 * @param	id			the id of the User from central database.
+	 * @param	username	the username of the User.
+	 * @param	password	the password of the User.
+	 * @param	realname	the User's actual name.
+	 * @param	email		the User's email address.
+	 * @param	phone		the User's phone number.
+	 * @param	address		the User's address.
+	 * @param	bio			the User's general information.
+	 */
 	public User createUser(int id, String username, String password, String realname, String email,
 			String phone, String address, String bio) {
 		ContentValues values = new ContentValues();
@@ -52,22 +64,49 @@ public class UserDataSource {
 		return user;
 	}
 	
+	/**
+	 * Deletes the user's info from the database. 
+	 *
+	 * @param	user	the User to be deleted.
+	 */
 	public void deleteUser(User user) {
 		int id = user.getId();
 		database.delete(UserTable.TABLE_USER, UserTable.COLUMN_ID + " = " + id, null);
 		Log.w(UserTable.class.getName(), "User deleted with id: " + id);
 	}
 	
+	/**
+	 * Gets the user's info from the database. 
+	 *
+	 * @return      the User's info as a User object.
+	 */
+	public User getUser() {
+		Cursor cursor = null;
+		try {
+			cursor = database.query(UserTable.TABLE_USER, null, null, null, null, null, null);
+		} catch (NullPointerException e) {
+			Log.e("EZRIDE_DATABASE_ERROR", "Retrieving user failed.");
+			return null;
+		}
+		if (cursor.getCount() == 0)
+			return null;
+		else
+			return CursorToUser(cursor);
+	}
+	
 	private User CursorToUser(Cursor cursor) {
+		if (cursor == null)
+			return null;
+		cursor.moveToFirst();
 		User user = new User();
-		user.setId(cursor.getInt(0));
-		user.setUsername(cursor.getString(1));
-		user.setPassword(cursor.getString(2));
-		user.setRealname(cursor.getString(3));
-		user.setEmail(cursor.getString(4));
-		user.setPhone(cursor.getString(5));
-		user.setAddress(cursor.getString(6));
-		user.setBio(cursor.getString(7));
+		user.setId(cursor.getInt(cursor.getColumnIndex(UserTable.COLUMN_ID)));
+		user.setUsername(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_USERNAME)));
+		user.setPassword(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_PASSWORD)));
+		user.setRealname(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_REALNAME)));
+		user.setEmail(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_EMAIL)));
+		user.setPhone(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_PHONE)));
+		user.setAddress(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_ADDRESS)));
+		user.setBio(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_BIO)));
 		return user;
 	}
 }
