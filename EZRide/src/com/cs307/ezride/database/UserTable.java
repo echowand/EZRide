@@ -1,4 +1,4 @@
-package com.cs307.ezride;
+package com.cs307.ezride.database;
 
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;

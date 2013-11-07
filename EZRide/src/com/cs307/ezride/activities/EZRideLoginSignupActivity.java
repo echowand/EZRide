@@ -1,4 +1,6 @@
-package com.cs307.ezride;
+package com.cs307.ezride.activities;
+
+import com.cs307.ezride.R;
 
 import android.os.Bundle;
 import android.app.Activity;

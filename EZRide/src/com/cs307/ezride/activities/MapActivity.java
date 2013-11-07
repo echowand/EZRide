@@ -1,7 +1,9 @@
-package com.cs307.ezride;
+package com.cs307.ezride.activities;
 
+import com.cs307.ezride.R;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.*;
+
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -20,10 +22,10 @@ public class MapActivity extends Activity {
 	@Override
 	    protected void onCreate(Bundle savedInstanceState) {
 	        super.onCreate(savedInstanceState);
-	        setContentView(R.layout.map_activity);
+	        setContentView(R.layout.activity_map);
 
 	        // Get a handle to the Map Fragment
-	        GoogleMap mMap = ((MapFragment) getFragmentManager()
+	        /*GoogleMap mMap = ((MapFragment) getFragmentManager()
 	                .findFragmentById(R.id.mMap)).getMap();
 
 	        mMap.setMyLocationEnabled(true);
@@ -37,7 +39,7 @@ public class MapActivity extends Activity {
 	        double long = myLocation.getLongitude();
 	        LatLng ll = new LatLng(lat, long);
 
-	        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ll, 20));
+	        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ll, 20));*/
 	}
 }
 	

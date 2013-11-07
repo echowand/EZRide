@@ -1,4 +1,6 @@
-package com.cs307.ezride;
+package com.cs307.ezride.activities;
+
+import com.cs307.ezride.R;
 
 import android.os.Bundle;
 import android.app.Activity;
@@ -100,7 +102,7 @@ public class GroupsActivityDrawer extends Activity {
 	
 	private class DrawerItemClickListener implements ListView.OnItemClickListener {
 		@Override
-		public void onItemClick(AdapterView parent, View view, int position, long id) {
+		public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 			selectItem(position);
 		}
 	}

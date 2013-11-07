@@ -1,5 +1,6 @@
-package com.cs307.ezride;
+package com.cs307.ezride.activities;
 
+import com.cs307.ezride.R;
 import com.loopj.android.http.*;
 
 import android.os.Bundle;

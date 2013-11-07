@@ -1,4 +1,4 @@
-package com.cs307.ezride;
+package com.cs307.ezride.database;
 
 public class User {
 	private int id;

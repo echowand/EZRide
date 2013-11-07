@@ -17,67 +17,62 @@
         android:label="@string/app_name"
         android:theme="@android:style/Theme.Holo.Light" >
         <activity
-            android:name="com.cs307.ezride.MainActivity"
+            android:name="com.cs307.ezride.activities.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name="com.cs307.ezride.EZRideLoginSignupActivity"
-            android:label="@string/title_activity_ezride_login_signup"
-            android:parentActivityName="com.cs307.ezride.MainActivity" >
+            android:name="com.cs307.ezride.activities.CalendarActivity"
+            android:label="@string/title_activity_calendar"
+            android:parentActivityName="com.cs307.ezride.activities.MainActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.cs307.ezride.MainActivity" />
+                android:value="com.cs307.ezride.activities.MainActivity" />
         </activity>
         <activity
-            android:name="com.cs307.ezride.MapActivity"
+            android:name="com.cs307.ezride.activities.EZRideLoginActivity"
+            android:label="@string/title_activity_ezride_login" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cs307.ezride.activities.EZRideLoginSignupActivity" />
+        </activity>
+        <activity
+            android:name="com.cs307.ezride.activities.EZRideLoginSignupActivity"
+            android:label="@string/title_activity_ezride_login_signup" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cs307.ezride.activities.MainActivity" />
+        </activity>
+        <activity
+			android:name="com.cs307.ezride.activities.EZRideSignUpActivity"
+            android:label="@string/title_activity_ezride_sign_up" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cs307.ezride.activities.EZRideLoginSignupActivity" />
+        </activity>
+        <activity
+ 			android:name="com.cs307.ezride.activities.GroupsActivity"
+            android:label="@string/title_activity_groups" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.cs307.ezride.activities.MainActivity" />
+        </activity>
+        <activity
+    		android:name="com.cs307.ezride.activities.MapActivity"
             android:label="@string/title_activity_map" >
         </activity>
         <activity
-            android:name="com.cs307.ezride.GroupsActivity"
-            android:label="@string/title_activity_groups"
-            android:parentActivityName="com.cs307.ezride.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.cs307.ezride.MainActivity" />
-        </activity>
-        <activity
-            android:name="com.cs307.ezride.ProfileActivity"
+            android:name="com.cs307.ezride.activities.ProfileActivity"
             android:label="@string/title_activity_profile" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.cs307.ezride.MainActivity" />
+                android:value="com.cs307.ezride.activities.MainActivity" />
         </activity>
         <activity
-            android:name="com.cs307.ezride.EZRideSignUpActivity"
-            android:label="@string/title_activity_ezride_sign_up"
-            android:parentActivityName="com.cs307.ezride.EZRideLoginSignupActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.cs307.ezride.EZRideLoginSignupActivity" />
-        </activity>
-        <activity
-            android:name="com.cs307.ezride.EZRideLoginActivity"
-            android:label="@string/title_activity_ezride_login"
-            android:parentActivityName="com.cs307.ezride.EZRideLoginSignupActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.cs307.ezride.EZRideLoginSignupActivity" />
-        </activity>
-        <activity
-            android:name="com.cs307.ezride.CalendarActivity"
-            android:label="@string/title_activity_calendar"
-            android:parentActivityName="com.cs307.ezride.MainActivity" >
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.cs307.ezride.MainActivity" />
-        </activity>
-        <activity
-            android:name="com.cs307.ezride.TestActivity"
+            android:name="com.cs307.ezride.activities.TestActivity"
             android:label="@string/title_activity_test" >
         </activity>
     </application>

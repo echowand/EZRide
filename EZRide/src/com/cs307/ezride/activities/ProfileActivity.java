@@ -1,5 +1,8 @@
-package com.cs307.ezride;
+package com.cs307.ezride.activities;
 
+import com.cs307.ezride.R;
+import com.cs307.ezride.database.User;
+import com.cs307.ezride.database.UserDataSource;
 import com.loopj.android.http.*;
 
 import android.os.Bundle;
