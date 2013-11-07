@@ -1,7 +1,7 @@
 package com.cs307.ezride;
 
-//import com.google.android.gms.maps.GoogleMap;
-
+import com.google.android.gms.maps.*;
+import com.google.android.gms.maps.model.*;
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.res.Configuration;
@@ -16,8 +16,33 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 public class MapActivity extends Activity {
+	
+	@Override
+	    protected void onCreate(Bundle savedInstanceState) {
+	        super.onCreate(savedInstanceState);
+	        setContentView(R.layout.map_activity);
+
+	        // Get a handle to the Map Fragment
+	        GoogleMap mMap = ((MapFragment) getFragmentManager()
+	                .findFragmentById(R.id.mMap)).getMap();
+
+	        mMap.setMyLocationEnabled(true);
+	        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+	        
+	        Criteria cri= new Criteria();
+	        String bbb = locationmanager.getBestProvider(cri, true);
+	        Location myLocation = locationmanager.getLastKnownLocation(bbb);
+
+	        double lat= myLocation.getLatitude();
+	        double long = myLocation.getLongitude();
+	        LatLng ll = new LatLng(lat, long);
+
+	        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ll, 20));
+	}
+}
+	
 	//private GoogleMap mMap;
-	private String[] mDrawerTitles;
+	/*private String[] mDrawerTitles;
 	private DrawerLayout mDrawerLayout;
 	private ListView mDrawerList;
 	private ActionBarDrawerToggle mDrawerToggle;
@@ -110,6 +135,5 @@ public class MapActivity extends Activity {
 	
 	private void selectItem(int position) {
 		
-	}
+	}*/
 
-}
