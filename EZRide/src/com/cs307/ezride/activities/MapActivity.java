@@ -2,13 +2,21 @@ package com.cs307.ezride.activities;
 
 import com.cs307.ezride.R;
 
+import android.content.Context;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.FragmentActivity;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.LatLng;
 
 public class MapActivity extends FragmentActivity {
 
@@ -21,6 +29,15 @@ public class MapActivity extends FragmentActivity {
 		
 		GoogleMap map = ((SupportMapFragment)getSupportFragmentManager().findFragmentById(R.id.map)).getMap();
 		map.setMyLocationEnabled(true);
+		map.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
+		
+		LocationManager locationManager = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+		Criteria c = new Criteria();
+		String bestProvider = locationManager.getBestProvider(c, true);
+		Location location = locationManager.getLastKnownLocation(bestProvider);
+		LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
+		CameraPosition cameraPosition = new CameraPosition.Builder().target(latlng).zoom((float)13.75).bearing(0).tilt(0).build();
+		map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 	}
 
 

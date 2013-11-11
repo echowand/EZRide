@@ -2,10 +2,13 @@ package com.cs307.ezride.activities;
 
 import com.cs307.ezride.R;
 import com.cs307.ezride.database.*;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GooglePlayServicesUtil;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.View;
 
 public class MainActivity extends Activity {
@@ -19,6 +22,13 @@ public class MainActivity extends Activity {
 		dbHelper = new DBHelper(this);
 		dbHelper.getReadableDatabase();
 		dbHelper.close();
+		
+		int r = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
+		if (r == ConnectionResult.SUCCESS) {
+			Log.d(MainActivity.class.getName(), "Google Play services is available.");
+		} else {
+			Log.d(MainActivity.class.getName(), "Google Play services is unavailable.");
+		}
 	}
 	
 	@Override
