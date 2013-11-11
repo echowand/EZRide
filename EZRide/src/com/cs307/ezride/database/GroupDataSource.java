@@ -26,6 +26,12 @@ public class GroupDataSource {
 		dbHelper.close();
 	}
 	
+	public void recreate() {
+		database.execSQL("DROP TABLE IF EXISTS " + GroupTable.TABLE_NAME);
+		GroupTable.onCreate(database);
+		Log.w(GroupDataSource.class.getName(), GroupTable.TABLE_NAME + " table recreated.");
+	}
+	
 	/**
 	 * Creates a group in the database. 
 	 *

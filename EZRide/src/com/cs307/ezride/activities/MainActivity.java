@@ -54,5 +54,10 @@ public class MainActivity extends Activity {
 		Intent intent = new Intent(this, CalendarActivity.class);
 		startActivity(intent);
 	}
+	
+	public void testMapActivity(View view) {
+		Intent intent = new Intent(this, MapActivity.class);
+		startActivity(intent);
+	}
 
 }

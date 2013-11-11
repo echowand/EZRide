@@ -49,6 +49,7 @@
     <string name="debug_profile_activity_button">Test Profile Activity</string>
     <string name="debug_groups_activity_button">Test Groups Activity</string>
     <string name="debug_calendar_activity_button">Test Calendar Activity</string>
+    <string name="debug_map_activity_button">Test Map Activity</string>
     <string name="logging_in">Logging in...</string>
     <string name="realname">Real Name</string>
     <string name="title_activity_calendar">CalendarActivity</string>

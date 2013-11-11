@@ -27,17 +27,7 @@ public class UserTable {
 			+ ");";
 	
 	public static void onCreate(SQLiteDatabase db) {
-		db.beginTransaction();
-		try {
-			db.execSQL(DATABASE_CREATE);
-			db.yieldIfContendedSafely();
-			db.setTransactionSuccessful();
-		} catch (Exception e) {
-			Log.e(GroupTable.class.getName(), "SQL Error.");
-			e.printStackTrace();
-		} finally {
-			db.endTransaction();
-		}
+		db.execSQL(DATABASE_CREATE);
 		Log.w(UserTable.class.getName(), TABLE_NAME + " table created.");
 	}
 	

@@ -54,28 +54,33 @@ public class EZRideLoginActivity extends Activity {
 				String response = new String(responseBody);
 				Log.d("EZRIDE_SERVER_RESULT", response);
 				
-				if (response.contains("wrong password") || response.contains("fail to find user")) {
-					Toast.makeText(EZRideLoginActivity.context, "Log in error. Please try again.", Toast.LENGTH_LONG).show();
-					finish();
-				} else {
-					mId = Integer.parseInt(response.substring(3, response.indexOf("\n")));
-					mRealName = response.substring(response.indexOf("name") + 5, response.indexOf("\n", response.indexOf("name")));
-					mEmail = response.substring(response.indexOf("email") + 6, response.indexOf("\n", response.indexOf("email")));
-					mPhoneNum = response.substring(response.indexOf("phonenumber") + 12, response.indexOf("\n", response.indexOf("phonenumber")));
-					mAddress = response.substring(response.indexOf("address") + 8, response.indexOf("\n", response.indexOf("address")));
-					mBio = response.substring(response.indexOf("profile") + 8, response.indexOf("\n", response.indexOf("profile")));
-					Log.d("EZRIDE_SERVER_RESULT", mId + "\n" + mRealName + "\n" + mEmail + "\n" + mPhoneNum + "\n" + mAddress + "\n" + mBio);
-					
-					User retuser = userdatasource.createUser(mId, mUsername, mPassword, mRealName, mEmail, mPhoneNum, mAddress, mBio);
-					
-					if (retuser != null) {
-						Intent intent = new Intent(EZRideLoginActivity.context, ProfileActivity.class);
-						startActivity(intent);
+				try {
+					if (response.contains("wrong password") || response.contains("fail to find user")) {
+						Toast.makeText(EZRideLoginActivity.context, "Log in error. Please try again.", Toast.LENGTH_LONG).show();
 						finish();
 					} else {
-						Toast.makeText(getBaseContext(), "Log in error. Please try again.", Toast.LENGTH_LONG).show();
-						finish();
+						mId = Integer.parseInt(response.substring(3, response.indexOf("\n")));
+						mRealName = response.substring(response.indexOf("name") + 5, response.indexOf("\n", response.indexOf("name")));
+						mEmail = response.substring(response.indexOf("email") + 6, response.indexOf("\n", response.indexOf("email")));
+						mPhoneNum = response.substring(response.indexOf("phonenumber") + 12, response.indexOf("\n", response.indexOf("phonenumber")));
+						mAddress = response.substring(response.indexOf("address") + 8, response.indexOf("\n", response.indexOf("address")));
+						mBio = response.substring(response.indexOf("profile") + 8, response.indexOf("\n", response.indexOf("profile")));
+						Log.d("EZRIDE_SERVER_RESULT", mId + "\n" + mRealName + "\n" + mEmail + "\n" + mPhoneNum + "\n" + mAddress + "\n" + mBio);
+						
+						User retuser = userdatasource.createUser(mId, mUsername, mPassword, mRealName, mEmail, mPhoneNum, mAddress, mBio);
+						
+						if (retuser != null) {
+							Intent intent = new Intent(EZRideLoginActivity.context, ProfileActivity.class);
+							startActivity(intent);
+							finish();
+						} else {
+							Toast.makeText(getBaseContext(), "Log in error. Please try again.", Toast.LENGTH_LONG).show();
+							finish();
+						}
 					}
+				} catch (StringIndexOutOfBoundsException e) {
+					Toast.makeText(getBaseContext(), "Server error. Please try again later.", Toast.LENGTH_LONG).show();
+					finish();
 				}
 			}
 			
@@ -96,18 +101,22 @@ public class EZRideLoginActivity extends Activity {
 				String response = new String(responseBody);
 				Log.d("EZRIDE_SERVER_RESULT", response);
 				
-				int numgroups = Integer.parseInt(response.substring(10, response.indexOf("\n")));
-				int groupidindex = response.indexOf("groupid");
-				for (int i = 0;i < numgroups;i++) {
-					int g_id = Integer.parseInt(response.substring(groupidindex + 8, response.indexOf("\n", groupidindex)));
-					String g_name = response.substring(response.indexOf("name", groupidindex) + 5, response.indexOf("\n", response.indexOf("name", groupidindex)));
-					String g_datecreated = response.substring(response.indexOf("datecreated", groupidindex) + 12, response.indexOf("\n", response.indexOf("datecreated", groupidindex)));
-					groupidindex = (response.indexOf("\n", response.indexOf("datecreated", groupidindex)) + 1);
-					
-					if (groupdatasource.createGroup(g_id, g_name, g_datecreated) == null) {
-						Toast.makeText(getBaseContext(), "Refresh failed. Please try again.", Toast.LENGTH_LONG).show();
-						break;
+				try {
+					int numgroups = Integer.parseInt(response.substring(10, response.indexOf("\n")));
+					int groupidindex = response.indexOf("groupid");
+					for (int i = 0;i < numgroups;i++) {
+						int g_id = Integer.parseInt(response.substring(groupidindex + 8, response.indexOf("\n", groupidindex)));
+						String g_name = response.substring(response.indexOf("name", groupidindex) + 5, response.indexOf("\n", response.indexOf("name", groupidindex)));
+						String g_datecreated = response.substring(response.indexOf("datecreated", groupidindex) + 12, response.indexOf("\n", response.indexOf("datecreated", groupidindex)));
+						groupidindex = (response.indexOf("\n", response.indexOf("datecreated", groupidindex)) + 1);
+						
+						if (groupdatasource.createGroup(g_id, g_name, g_datecreated) == null) {
+							Toast.makeText(getBaseContext(), "Refresh failed. Please try again.", Toast.LENGTH_LONG).show();
+							break;
+						}
 					}
+				} catch (StringIndexOutOfBoundsException e) {
+					Toast.makeText(getBaseContext(), "Server error. Please try again later.", Toast.LENGTH_LONG).show();
 				}
 			}
 			

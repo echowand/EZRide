@@ -28,6 +28,7 @@ public class GroupsActivity extends Activity {
 	private UserDataSource userdatasource = null;
 	private GroupDataSource groupdatasource = null;
 	private User user = null;
+	private Group[] groups = null;
 	//private Group group = null;
 
 	@Override
@@ -44,7 +45,7 @@ public class GroupsActivity extends Activity {
 		user = userdatasource.getUser();
 		
 		if (user != null) {
-			RequestParams params = new RequestParams();
+			/*RequestParams params = new RequestParams();
 			params.put("username", user.getUsername());
 			params.put("password", user.getPassword());
 			
@@ -62,8 +63,8 @@ public class GroupsActivity extends Activity {
 				public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 					Toast.makeText(getBaseContext(), "You've selected " + mGroupNamesArray.get(position), Toast.LENGTH_LONG).show();
 				}
-			});
-			//refreshGroups();
+			});*/
+			refreshGroups();
 		} else {
 			Toast.makeText(getBaseContext(), "You're not logged in. Log in to view your groups.", Toast.LENGTH_LONG).show();
 			finish();
@@ -123,7 +124,35 @@ public class GroupsActivity extends Activity {
 		popup.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				RequestParams params = new RequestParams();
+				params.put("username", user.getUsername());
+				params.put("password", user.getPassword());
+				params.put("groupname", input.getText().toString());
 				
+				AsyncHttpClient client = new AsyncHttpClient();
+				client.post("http://ezride-weiqing.rhcloud.com/androidcreategroup.php", params, new AsyncHttpResponseHandler() {
+					@Override
+					public void onStart() {
+						super.onStart();
+					}
+					
+					@Override
+					public void onSuccess(int statusCode, org.apache.http.Header[] headers, byte[] responseBody) {
+						String response = new String(responseBody);
+						Log.d("EZRIDE_SERVER_RESULT", response);
+						
+						if (response.contains("failed")) {
+							Toast.makeText(getBaseContext(), "Failed to create group. Please try again.", Toast.LENGTH_LONG).show();
+						}
+					}
+					
+					@Override
+					public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
+						String response = new String(responseBody);
+						Log.d("EZRIDE_SERVER_RESULT", response);
+						Toast.makeText(getBaseContext(), "Server error. Please try again.", Toast.LENGTH_LONG).show();
+					}
+				});
 			}
 		});
 		
@@ -184,6 +213,7 @@ public class GroupsActivity extends Activity {
 				String response = new String(responseBody);
 				Log.d("EZRIDE_SERVER_RESULT", response);
 				
+				groupdatasource.recreate();
 				int numgroups = Integer.parseInt(response.substring(10, response.indexOf("\n")));
 				int groupidindex = response.indexOf("groupid");
 				for (int i = 0;i < numgroups;i++) {
@@ -197,6 +227,25 @@ public class GroupsActivity extends Activity {
 						break;
 					}
 				}
+				
+				groups = groupdatasource.getGroups();
+				mGroupNamesArray = new ArrayList<String>();
+				
+				for (int i = 0;i < groups.length;i++) {
+					Log.d("EZRIDE_GROUP_NAME", groups[i].getName());
+					mGroupNamesArray.add(groups[i].getName());
+				}
+				
+				mGroupNamesArrayAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.groups_item_simple, mGroupNamesArray);
+				mGroupsList = (ListView)findViewById(R.id.groups_activity_listview);
+				mGroupsList.setAdapter(mGroupNamesArrayAdapter);
+				
+				mGroupsList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+					@Override
+					public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+						Toast.makeText(getBaseContext(), "You've selected " + mGroupNamesArray.get(position), Toast.LENGTH_LONG).show();
+					}
+				});
 			}
 			
 			@Override
@@ -206,5 +255,4 @@ public class GroupsActivity extends Activity {
 			}
 		});
 	}
-
 }

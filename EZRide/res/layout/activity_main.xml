@@ -19,17 +19,6 @@
         android:text="@string/welcome"
         android:textSize="50sp" />
 
-    <TextView
-        android:id="@+id/welcome_message_label"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/welcome_label"
-        android:layout_below="@+id/welcome_label"
-        android:layout_marginTop="23dp"
-        android:gravity="center"
-        android:text="@string/welcome_text"
-        android:textSize="12sp" />
-
     <Button
         android:id="@+id/gplus_login_screen_button"
         android:layout_width="wrap_content"
@@ -39,16 +28,6 @@
         android:text="@string/debug_profile_activity_button"
         android:onClick="gplusLogin"
         android:ems="10" />
-
-    <Button
-        android:id="@+id/fb_login_screen_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/gplus_login_screen_button"
-        android:layout_below="@+id/welcome_message_label"
-        android:ems="10"
-        android:onClick="fbLogin"
-        android:text="@string/debug_groups_activity_button" />
 
     <Button
         android:id="@+id/test_calendar_activity_button"
@@ -69,5 +48,35 @@
         android:ems="10"
         android:onClick="ezrideLogin"
         android:text="@string/ezride_login_button" />
+
+    <TextView
+        android:id="@+id/welcome_message_label"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/welcome_label"
+        android:layout_below="@+id/welcome_label"
+        android:gravity="center"
+        android:text="@string/welcome_text"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/test_map_activity_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/fb_login_screen_button"
+        android:layout_below="@+id/welcome_message_label"
+        android:ems="10"
+        android:onClick="testMapActivity"
+        android:text="@string/debug_map_activity_button" />
+
+    <Button
+        android:id="@+id/fb_login_screen_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/gplus_login_screen_button"
+        android:layout_below="@+id/test_map_activity_button"
+        android:ems="10"
+        android:onClick="fbLogin"
+        android:text="@string/debug_groups_activity_button" />
 
 </RelativeLayout>
