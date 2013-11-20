@@ -40,6 +40,7 @@ public class GroupDataSource {
 	 * @param	datecreated	the group's creation date and time.
 	 */
 	public Group createGroup(int id, String name, String datecreated) {
+		Log.d("GroupDataSource.createGroup", "id=" + id + "\nname=" + name + "\ndatecreated=" + datecreated);
 		ContentValues values = new ContentValues();
 		values.put(GroupTable.COLUMN_ID, id);
 		values.put(GroupTable.COLUMN_NAME, name);
@@ -71,8 +72,8 @@ public class GroupDataSource {
 	 */
 	public void deleteGroup(Group group) {
 		int id = group.getId();
-		database.delete(GroupTable.TABLE_NAME, UserTable.COLUMN_ID + " = " + id, null);
-		Log.w(UserTable.class.getName(), "Group deleted with id: " + id);
+		database.delete(GroupTable.TABLE_NAME, UserDataSource.PREF_ID + " = " + id, null);
+		Log.w(GroupDataSource.class.getName(), "Group deleted with id: " + id);
 	}
 	
 	/**
@@ -105,9 +106,8 @@ public class GroupDataSource {
 	}
 	
 	private Group CursorToGroup(Cursor cursor) {
-		if (cursor == null)
+		if ((cursor == null)||(cursor.isAfterLast()))
 			return null;
-		cursor.moveToFirst();
 		Group group = new Group();
 		group.setId(cursor.getInt(cursor.getColumnIndex(GroupTable.COLUMN_ID)));
 		group.setName(cursor.getString(cursor.getColumnIndex(GroupTable.COLUMN_NAME)));

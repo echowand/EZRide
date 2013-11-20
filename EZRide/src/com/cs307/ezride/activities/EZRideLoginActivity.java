@@ -5,9 +5,12 @@ import com.cs307.ezride.database.*;
 import com.loopj.android.http.*;
 
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,8 +21,8 @@ public class EZRideLoginActivity extends Activity {
 	private String mUsername, mPassword, mRealName, mEmail, mPhoneNum, mAddress, mBio;
 	private int mId;
 	public static Context context = null;
-	private UserDataSource userdatasource = null;
 	private GroupDataSource groupdatasource = null;
+	private SharedPreferences mPrefs = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -29,9 +32,8 @@ public class EZRideLoginActivity extends Activity {
 		// Show the Up button in the action bar.
 		//getActionBar().setDisplayHomeAsUpEnabled(true);
 		
-		userdatasource = new UserDataSource(this);
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		groupdatasource = new GroupDataSource(this);
-		userdatasource.open();
 		groupdatasource.open();
 		
 		Intent intent = getIntent();
@@ -67,9 +69,11 @@ public class EZRideLoginActivity extends Activity {
 						mBio = response.substring(response.indexOf("profile") + 8, response.indexOf("\n", response.indexOf("profile")));
 						Log.d("EZRIDE_SERVER_RESULT", mId + "\n" + mRealName + "\n" + mEmail + "\n" + mPhoneNum + "\n" + mAddress + "\n" + mBio);
 						
-						User retuser = userdatasource.createUser(mId, mUsername, mPassword, mRealName, mEmail, mPhoneNum, mAddress, mBio);
+						Editor prefEditor = mPrefs.edit();
+						prefEditor.putInt("userid", mId).putString("username", mUsername).putString("password", mPassword).putString("name", mRealName);
+						prefEditor.putString("email", mEmail).putString("phonenumber", mPhoneNum).putString("address", mAddress).putString("bio", mBio);
 						
-						if (retuser != null) {
+						if (prefEditor.commit()) {
 							Intent intent = new Intent(EZRideLoginActivity.context, ProfileActivity.class);
 							startActivity(intent);
 							finish();
@@ -86,7 +90,8 @@ public class EZRideLoginActivity extends Activity {
 			
 			@Override
 			public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
-				
+				Toast.makeText(getBaseContext(), "Server error. Please try again later.", Toast.LENGTH_LONG).show();
+				finish();
 			}
 		});
 		
@@ -130,8 +135,6 @@ public class EZRideLoginActivity extends Activity {
 	
 	@Override
 	protected void onDestroy() {
-		if (userdatasource != null)
-			userdatasource.close();
 		if (groupdatasource != null)
 			groupdatasource.close();
 		super.onDestroy();

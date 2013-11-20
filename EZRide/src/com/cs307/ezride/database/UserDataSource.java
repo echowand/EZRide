@@ -1,38 +1,30 @@
 package com.cs307.ezride.database;
 
-import android.content.ContentValues;
 import android.content.Context;
-import android.database.Cursor;
-import android.database.SQLException;
-import android.database.sqlite.SQLiteDatabase;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 public class UserDataSource {
-	private SQLiteDatabase database;
-	private DBHelper dbHelper;
-	private String[] allColumns = { UserTable.COLUMN_ID,
-			UserTable.COLUMN_USERNAME,
-			UserTable.COLUMN_PASSWORD,
-			UserTable.COLUMN_REALNAME,
-			UserTable.COLUMN_EMAIL,
-			UserTable.COLUMN_PHONE,
-			UserTable.COLUMN_ADDRESS,
-			UserTable.COLUMN_BIO };
+	private SharedPreferences mPrefs = null;
+	private Editor mPrefsEditor = null;
+	public static final String PREF_ID = "userid";
+	public static final String PREF_USERNAME = "username";
+	public static final String PREF_PASSWORD = "password";
+	public static final String PREF_REALNAME = "realname";
+	public static final String PREF_EMAIL = "email";
+	public static final String PREF_PHONE = "phone";
+	public static final String PREF_ADDRESS = "address";
+	public static final String PREF_BIO = "bio";
 	
 	public UserDataSource(Context context) {
-		dbHelper = new DBHelper(context);
-	}
-	
-	public void open() throws SQLException {
-		database = dbHelper.getWritableDatabase();
-	}
-	
-	public void close() {
-		dbHelper.close();
+		mPrefs = PreferenceManager.getDefaultSharedPreferences(context);
+		//mPrefsEditor = mPrefs.edit();
 	}
 	
 	/**
-	 * Creates a user in the database. 
+	 * Creates a user in Shared Preferences. 
 	 *
 	 * @param	id			the id of the User from central database.
 	 * @param	username	the username of the User.
@@ -42,58 +34,85 @@ public class UserDataSource {
 	 * @param	phone		the User's phone number.
 	 * @param	address		the User's address.
 	 * @param	bio			the User's general information.
+	 * @return				an User object containing the information of the user created. null if creation failed.
 	 */
 	public User createUser(int id, String username, String password, String realname, String email,
 			String phone, String address, String bio) {
-		ContentValues values = new ContentValues();
-		values.put(UserTable.COLUMN_ID, id);
-		values.put(UserTable.COLUMN_USERNAME, username);
-		values.put(UserTable.COLUMN_PASSWORD, password);
-		values.put(UserTable.COLUMN_REALNAME, realname);
-		values.put(UserTable.COLUMN_EMAIL, email);
-		values.put(UserTable.COLUMN_PHONE, phone);
-		values.put(UserTable.COLUMN_ADDRESS, address);
-		values.put(UserTable.COLUMN_BIO, bio);
-		
-		long insertId = database.insert(UserTable.TABLE_NAME, null, values);
-		Cursor cursor = database.query(UserTable.TABLE_NAME, allColumns, UserTable.COLUMN_ID + " = " + insertId, null, null, null, null);
-		cursor.moveToFirst();
-		
-		User user = CursorToUser(cursor);
-		cursor.close();
-		return user;
+		if (mPrefs != null) {
+			mPrefsEditor = mPrefs.edit();
+			mPrefsEditor.putInt(PREF_ID, id).putString(PREF_USERNAME, username).putString(PREF_PASSWORD, password).putString(PREF_REALNAME, realname);
+			mPrefsEditor.putString(PREF_EMAIL, email).putString(PREF_PHONE, phone).putString(PREF_ADDRESS, address).putString(PREF_BIO, bio);
+			
+			if (!mPrefsEditor.commit()) {
+				Log.w(UserDataSource.class.getName(), "Create user commit failed.");
+				return null;
+			} else {
+				User user = new User();
+				user.setId(id);
+				user.setAddress(address);
+				user.setBio(bio);
+				user.setEmail(email);
+				user.setPassword(password);
+				user.setPhone(phone);
+				user.setRealname(realname);
+				user.setUsername(username);
+				return user;
+			}
+		} else {
+			Log.w(UserDataSource.class.getName(), "SharedPreferences variable was not initialized somehow.");
+			return null;
+		}
 	}
 	
 	/**
-	 * Updates the user's info in the database. 
+	 * Updates the user's info in Shared Preferences. 
 	 *
-	 * @param	user	the User to be deleted.
-	 * @return			0 if the user was not successfully updated, >0 otherwise.
+	 * @param	user	the User to be updated.
+	 * @return			true if the user was successfully updated, false otherwise.
 	 */
-	public int updateUser(User user) {
-		ContentValues values = new ContentValues();
-		values.put(UserTable.COLUMN_USERNAME, user.getUsername());
-		values.put(UserTable.COLUMN_PASSWORD, user.getPassword());
-		values.put(UserTable.COLUMN_REALNAME, user.getRealname());
-		values.put(UserTable.COLUMN_EMAIL, user.getEmail());
-		values.put(UserTable.COLUMN_PHONE, user.getPhone());
-		values.put(UserTable.COLUMN_ADDRESS, user.getAddress());
-		values.put(UserTable.COLUMN_BIO, user.getBio());
-		
-		String whereClause = UserTable.COLUMN_ID + "=?";
-		String[] whereArgs = { Integer.toString(user.getId()) };
-		return database.update(UserTable.TABLE_NAME, values, whereClause, whereArgs);
+	public boolean updateUser(User user) {
+		if ((user != null)&&(mPrefs != null)) {
+			mPrefsEditor = mPrefs.edit();
+			mPrefsEditor.putInt(PREF_ID, user.getId()).putString(PREF_USERNAME, user.getUsername()).putString(PREF_PASSWORD, user.getPassword()).putString(PREF_REALNAME, user.getRealname());
+			mPrefsEditor.putString(PREF_EMAIL, user.getEmail()).putString(PREF_PHONE, user.getPhone()).putString(PREF_ADDRESS, user.getAddress()).putString(PREF_BIO, user.getBio());
+			if (mPrefsEditor.commit())
+				return true;
+			else {
+				Log.w(UserDataSource.class.getName(), "Update user commit failed.");
+				return false;
+			}
+		} else {
+			Log.w(UserDataSource.class.getName(), "Either user was null or SharedPreferences variable was not initialized somehow.");
+			return false;
+		}
 	}
 	
 	/**
-	 * Deletes the user's info from the database. 
-	 *
-	 * @param	user	the User to be deleted.
+	 * Deletes the user's info from Shared Preferences.
+	 * 
+	 * @return			true if the user was successfully deleted, false otherwise.
 	 */
-	public void deleteUser(User user) {
-		int id = user.getId();
-		database.delete(UserTable.TABLE_NAME, UserTable.COLUMN_ID + " = " + id, null);
-		Log.w(UserTable.class.getName(), "User deleted with id: " + id);
+	public boolean deleteUser() {
+		if (mPrefs != null) {
+			mPrefsEditor = mPrefs.edit();
+			mPrefsEditor.remove(PREF_ID);
+			mPrefsEditor.remove(PREF_USERNAME);
+			mPrefsEditor.remove(PREF_PASSWORD);
+			mPrefsEditor.remove(PREF_REALNAME);
+			mPrefsEditor.remove(PREF_EMAIL);
+			mPrefsEditor.remove(PREF_PHONE);
+			mPrefsEditor.remove(PREF_ADDRESS);
+			mPrefsEditor.remove(PREF_BIO);
+			if (mPrefsEditor.commit())
+				return true;
+			else {
+				Log.w(UserDataSource.class.getName(), "Delete user commit failed.");
+				return false;
+			}
+		} else {
+			Log.w(UserDataSource.class.getName(), "SharedPreferences variable was not initialized somehow.");
+			return false;
+		}
 	}
 	
 	/**
@@ -102,32 +121,25 @@ public class UserDataSource {
 	 * @return      the User's info as a User object.
 	 */
 	public User getUser() {
-		Cursor cursor = null;
-		try {
-			cursor = database.query(UserTable.TABLE_NAME, null, null, null, null, null, null);
-		} catch (NullPointerException e) {
-			Log.e("EZRIDE_DATABASE_ERROR", "Retrieving user failed.");
+		if (mPrefs != null) {
+			User user = new User();
+			user.setAddress(mPrefs.getString(PREF_ADDRESS, null));
+			user.setBio(mPrefs.getString(PREF_BIO, null));
+			user.setEmail(mPrefs.getString(PREF_EMAIL, null));
+			user.setId(mPrefs.getInt(PREF_ID, -1));
+			user.setPassword(mPrefs.getString(PREF_PASSWORD, null));
+			user.setPhone(mPrefs.getString(PREF_PHONE, null));
+			user.setRealname(mPrefs.getString(PREF_REALNAME, null));
+			user.setUsername(mPrefs.getString(PREF_USERNAME, null));
+			if (user.getId() == -1) {
+				Log.w(UserDataSource.class.getName(), "Create user commit failed.");
+				return null;
+			} else {
+				return user;
+			}
+		} else {
+			Log.w(UserDataSource.class.getName(), "SharedPreferences variable was not initialized somehow.");
 			return null;
 		}
-		if (cursor.getCount() == 0)
-			return null;
-		else
-			return CursorToUser(cursor);
-	}
-	
-	private User CursorToUser(Cursor cursor) {
-		if (cursor == null)
-			return null;
-		cursor.moveToFirst();
-		User user = new User();
-		user.setId(cursor.getInt(cursor.getColumnIndex(UserTable.COLUMN_ID)));
-		user.setUsername(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_USERNAME)));
-		user.setPassword(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_PASSWORD)));
-		user.setRealname(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_REALNAME)));
-		user.setEmail(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_EMAIL)));
-		user.setPhone(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_PHONE)));
-		user.setAddress(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_ADDRESS)));
-		user.setBio(cursor.getString(cursor.getColumnIndex(UserTable.COLUMN_BIO)));
-		return user;
 	}
 }

@@ -27,7 +27,6 @@ public class ProfileActivity extends Activity {
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
 		datasource = new UserDataSource(this);
-		datasource.open();
 		user = datasource.getUser();
 		
 		//Log.d("EZRIDE_USER", user.toString());
@@ -59,8 +58,6 @@ public class ProfileActivity extends Activity {
 	
 	@Override
 	protected void onDestroy() {
-		if (datasource != null)
-			datasource.close();
 		super.onDestroy();
 	}
 
@@ -108,7 +105,7 @@ public class ProfileActivity extends Activity {
 		user.setAddress(editAddress.getText().toString());
 		user.setBio(editBio.getText().toString());
 		
-		if (datasource.updateUser(user) > 0) {
+		if (datasource.updateUser(user)) {
 			AsyncHttpClient client = new AsyncHttpClient();
 			client.post("http://ezride-weiqing.rhcloud.com/androidupdateuserinfo.php", params, new AsyncHttpResponseHandler() {
 				@Override

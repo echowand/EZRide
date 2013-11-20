@@ -29,7 +29,6 @@ public class GroupsActivity extends Activity {
 	private GroupDataSource groupdatasource = null;
 	private User user = null;
 	private Group[] groups = null;
-	//private Group group = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -40,7 +39,6 @@ public class GroupsActivity extends Activity {
 		
 		userdatasource = new UserDataSource(this);
 		groupdatasource = new GroupDataSource(this);
-		userdatasource.open();
 		groupdatasource.open();
 		user = userdatasource.getUser();
 		
@@ -54,8 +52,6 @@ public class GroupsActivity extends Activity {
 	
 	@Override
 	protected void onDestroy() {
-		if (userdatasource != null)
-			userdatasource.close();
 		if (groupdatasource != null)
 			groupdatasource.close();
 		super.onDestroy();
@@ -110,7 +106,6 @@ public class GroupsActivity extends Activity {
 				params.put("username", user.getUsername());
 				params.put("password", user.getPassword());
 				params.put("groupname", input.getText().toString());
-				
 				createGroup(params);
 			}
 		});
@@ -127,28 +122,34 @@ public class GroupsActivity extends Activity {
 	}
 	
 	private void onJoinButtonClick() {
-		AlertDialog.Builder popup = new AlertDialog.Builder(this);
+		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 		final EditText input = new EditText(this);
 		
-		popup.setTitle("Join Group");
-		popup.setMessage("Enter the name of the group:");
-		popup.setView(input);
+		builder.setTitle("Join Group");
+		builder.setMessage("Enter the name of the group:");
+		builder.setView(input);
 		
-		popup.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+		builder.setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				Log.d("EZRIDE_ON_CLICK", "clicked: " + input.getText().toString());
+				RequestParams params = new RequestParams();
+				params.put("username", user.getUsername());
+				params.put("password", user.getPassword());
+				params.put("groupname", input.getText().toString());
+				joinGroup(params);
+			}
+		});
+		
+		builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.cancel();
 			}
 		});
 		
-		popup.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.cancel();
-			}
-		});
-		
-		popup.show();
+		AlertDialog dialog = builder.create();
+		dialog.show();
 	}
 	
 	private void onRefreshButtonClick() {
@@ -159,32 +160,14 @@ public class GroupsActivity extends Activity {
 		AsyncHttpClient client = new AsyncHttpClient();
 		client.post("http://ezride-weiqing.rhcloud.com/androidcreategroup.php", params, new AsyncHttpResponseHandler() {
 			@Override
-			public void onStart() {
-				Log.d("EZRIDE_ON_START", "starting post");
-				super.onStart();
-			}
-			
-			@Override
-			public void onFinish() {
-				Log.d("EZRIDE_ON_FINISH", "finished post");
-				super.onFinish();
-			}
-			
-			@Override
-			public void onRetry() {
-				Log.d("EZRIDE_ON_FINISH", "retry post");
-				super.onRetry();
-			}
-			
-			@Override
 			public void onSuccess(int statusCode, org.apache.http.Header[] headers, byte[] responseBody) {
 				String response = new String(responseBody);
 				Log.d("EZRIDE_SERVER_RESULT", response);
 				
-				if (response.contains("failed")) {
-					Toast.makeText(getBaseContext(), "Failed to create group. Please try again.", Toast.LENGTH_LONG).show();
-				} else {
+				if (response.contains("success")) {
 					refreshGroups();
+				} else {
+					Toast.makeText(getBaseContext(), response, Toast.LENGTH_LONG).show();
 				}
 			}
 			
@@ -197,7 +180,30 @@ public class GroupsActivity extends Activity {
 		});
 	}
 	
-	/*Need to make this asynchronous */
+	private void joinGroup(RequestParams params) {
+		AsyncHttpClient client = new AsyncHttpClient();
+		client.post("http://ezride-weiqing.rhcloud.com/androidjoingroup.php", params, new AsyncHttpResponseHandler() {
+			@Override
+			public void onSuccess(int statusCode, org.apache.http.Header[] headers, byte[] responseBody) {
+				String response = new String(responseBody);
+				Log.d("EZRIDE_SERVER_RESULT", response);
+				
+				if (response.contains("success")) {
+					refreshGroups();
+				} else {
+					Toast.makeText(getBaseContext(), "Failed to join group. Please try again.", Toast.LENGTH_LONG).show();
+				}
+			}
+			
+			@Override
+			public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
+				String response = new String(responseBody);
+				Log.d("EZRIDE_SERVER_RESULT", response);
+				Toast.makeText(getBaseContext(), "Server error. Please try again.", Toast.LENGTH_LONG).show();
+			}
+		});
+	}
+	
 	private void refreshGroups() {
 		RequestParams params = new RequestParams();
 		params.put("username", user.getUsername());
@@ -206,14 +212,9 @@ public class GroupsActivity extends Activity {
 		AsyncHttpClient client = new AsyncHttpClient();
 		client.post("http://ezride-weiqing.rhcloud.com/androidgetusergroups.php", params, new AsyncHttpResponseHandler() {
 			@Override
-			public void onStart() {
-				super.onStart();
-			}
-			
-			@Override
 			public void onSuccess(int statusCode, org.apache.http.Header[] headers, byte[] responseBody) {
 				String response = new String(responseBody);
-				Log.d("EZRIDE_SERVER_RESULT", response);
+				Log.d("GroupsActivity.refreshGroups().response.succeed", response);
 				
 				groupdatasource.recreate();
 				int numgroups = Integer.parseInt(response.substring(10, response.indexOf("\n")));
@@ -223,6 +224,7 @@ public class GroupsActivity extends Activity {
 					String g_name = response.substring(response.indexOf("name", groupidindex) + 5, response.indexOf("\n", response.indexOf("name", groupidindex)));
 					String g_datecreated = response.substring(response.indexOf("datecreated", groupidindex) + 12, response.indexOf("\n", response.indexOf("datecreated", groupidindex)));
 					groupidindex = (response.indexOf("\n", response.indexOf("datecreated", groupidindex)) + 1);
+					Log.d("GroupsActivity.refreshGroups()", "id=" + g_id + "\nname=" + g_name + "\ndatecreated=" + g_datecreated + "\ngroupidindex=" + groupidindex);
 					
 					if (groupdatasource.createGroup(g_id, g_name, g_datecreated) == null) {
 						Toast.makeText(getBaseContext(), "Refresh failed. Please try again.", Toast.LENGTH_LONG).show();
@@ -234,7 +236,7 @@ public class GroupsActivity extends Activity {
 				mGroupNamesArray = new ArrayList<String>();
 				
 				for (int i = 0;i < groups.length;i++) {
-					Log.d("EZRIDE_GROUP_NAME", groups[i].getName());
+					Log.d("GroupsActivity.refreshGroups().groupid", Integer.toString(groups[i].getId()));
 					mGroupNamesArray.add(groups[i].getName());
 				}
 				
@@ -253,7 +255,7 @@ public class GroupsActivity extends Activity {
 			@Override
 			public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
 				String response = new String(responseBody);
-				Log.d("EZRIDE_SERVER_RESULT", response);
+				Log.d("GroupsActivity.refreshGroups().response.fail", response);
 			}
 		});
 	}
