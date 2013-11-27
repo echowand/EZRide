@@ -215,6 +215,9 @@ containing a value of this type.
         public static final int login_screen=0x7f020023;
     }
     public static final class id {
+        public static final int action_calendar_view=0x7f050013;
+        public static final int action_groups_view=0x7f050012;
+        public static final int action_map_view=0x7f050011;
         public static final int action_settings=0x7f05000d;
         public static final int activity_groups=0x7f050006;
         public static final int calendar=0x7f050005;
@@ -252,8 +255,11 @@ containing a value of this type.
         public static final int map=0x7f0a0003;
     }
     public static final class string {
+        public static final int action_calendar_view=0x7f06001e;
+        public static final int action_groups_view=0x7f06001d;
+        public static final int action_map_view=0x7f06001c;
         public static final int action_settings=0x7f06001b;
-        public static final int action_websearch=0x7f060024;
+        public static final int action_websearch=0x7f060027;
         public static final int app_name=0x7f06001a;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
@@ -278,7 +284,7 @@ containing a value of this type.
         [CHAR LIMIT=70] 
          */
         public static final int auth_client_using_bad_version_title=0x7f060014;
-        public static final int bio=0x7f060023;
+        public static final int bio=0x7f060026;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -350,35 +356,34 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060013;
-        public static final int debug_calendar_activity_button=0x7f060034;
-        public static final int debug_groups_activity_button=0x7f060033;
-        public static final int debug_map_activity_button=0x7f060035;
-        public static final int debug_profile_activity_button=0x7f060032;
-        public static final int drawer_close=0x7f060022;
-        public static final int drawer_open=0x7f060021;
-        public static final int groups_action_add=0x7f06002b;
-        public static final int groups_action_join=0x7f06002c;
-        public static final int groups_action_refresh=0x7f06002d;
-        public static final int groups_popup_add_button_add=0x7f06002f;
-        public static final int groups_popup_add_button_cancel=0x7f060031;
-        public static final int groups_popup_add_button_clear=0x7f060030;
-        public static final int groups_popup_add_name=0x7f06002e;
-        public static final int hello_world=0x7f06001c;
-        public static final int logging_in=0x7f060036;
-        public static final int login=0x7f06001f;
-        public static final int logout=0x7f060020;
-        public static final int profile_action_save=0x7f06002a;
-        public static final int realname=0x7f060037;
-        public static final int title_activity_calendar=0x7f060038;
-        public static final int title_activity_ezride_login=0x7f060029;
-        public static final int title_activity_ezride_sign_up=0x7f060028;
-        public static final int title_activity_gplus_login=0x7f06003a;
-        public static final int title_activity_groups=0x7f060025;
-        public static final int title_activity_map=0x7f060027;
-        public static final int title_activity_profile=0x7f060026;
-        public static final int title_activity_test=0x7f060039;
-        public static final int welcome=0x7f06001d;
-        public static final int welcome_text=0x7f06001e;
+        public static final int debug_calendar_activity_button=0x7f060037;
+        public static final int debug_groups_activity_button=0x7f060036;
+        public static final int debug_map_activity_button=0x7f060038;
+        public static final int debug_profile_activity_button=0x7f060035;
+        public static final int drawer_close=0x7f060025;
+        public static final int drawer_open=0x7f060024;
+        public static final int groups_action_add=0x7f06002e;
+        public static final int groups_action_join=0x7f06002f;
+        public static final int groups_action_refresh=0x7f060030;
+        public static final int groups_popup_add_button_add=0x7f060032;
+        public static final int groups_popup_add_button_cancel=0x7f060034;
+        public static final int groups_popup_add_button_clear=0x7f060033;
+        public static final int groups_popup_add_name=0x7f060031;
+        public static final int hello_world=0x7f06001f;
+        public static final int login=0x7f060022;
+        public static final int logout=0x7f060023;
+        public static final int profile_action_save=0x7f06002d;
+        public static final int realname=0x7f060039;
+        public static final int title_activity_calendar=0x7f06003a;
+        public static final int title_activity_ezride_login=0x7f06002c;
+        public static final int title_activity_ezride_sign_up=0x7f06002b;
+        public static final int title_activity_gplus_login=0x7f06003c;
+        public static final int title_activity_groups=0x7f060028;
+        public static final int title_activity_map=0x7f06002a;
+        public static final int title_activity_profile=0x7f060029;
+        public static final int title_activity_test=0x7f06003b;
+        public static final int welcome=0x7f060020;
+        public static final int welcome_text=0x7f060021;
     }
     public static final class style {
         /** 
@@ -409,9 +414,7 @@ containing a value of this type.
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f090001;
-        public static final int LoginFormContainer=0x7f090004;
-        public static final int Theme_HighlightCopy=0x7f090002;
-        public static final int Theme_HighlightCopy_ActionBar=0x7f090003;
+        public static final int LoginFormContainer=0x7f090002;
     }
     public static final class styleable {
         /** Attributes that can be used with a AdsAttrs.

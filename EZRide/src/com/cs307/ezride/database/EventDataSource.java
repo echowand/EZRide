@@ -13,6 +13,7 @@ public class EventDataSource {
 	private SQLiteDatabase database;
 	private DBHelper dbHelper;
 	private String[] allColumns = { EventTable.COLUMN_ID,
+			EventTable.COLUMN_GOOGLEID,
 			EventTable.COLUMN_TITLE,
 			EventTable.COLUMN_DETAILS,
 			EventTable.COLUMN_START,
@@ -46,10 +47,11 @@ public class EventDataSource {
 	 * @param	end			the end time of the event
 	 * @return				the data of the event bundled into an Event object
 	 */
-	public Event addEvent(int id, String title, String details, String start, String end) {
-		Log.d(EventDataSource.class.getName() + ".createEvent", "id=" + id + "\ntitle=" + title + "\ndetails=" + details + "\nstart=" + start + "\nend=" + end);
+	public Event addEvent(int id, int google_id, String title, String details, String start, String end) {
+		Log.d(EventDataSource.class.getName() + ".createEvent", "id=" + id + "\ngoogle_id=" + google_id + "\ntitle=" + title + "\ndetails=" + details + "\nstart=" + start + "\nend=" + end);
 		ContentValues values = new ContentValues();
 		values.put(EventTable.COLUMN_ID, id);
+		values.put(EventTable.COLUMN_GOOGLEID, google_id);
 		values.put(EventTable.COLUMN_TITLE, title);
 		values.put(EventTable.COLUMN_DETAILS, details);
 		values.put(EventTable.COLUMN_START, start);
@@ -71,9 +73,10 @@ public class EventDataSource {
 	 * @return				null if failure, the original object on success
 	 */
 	public Event addEvent(Event event) {
-		Log.d(EventDataSource.class.getName() + ".createEvent", "id=" + event.getId() + "\ntitle=" + event.getTitle() + "\ndetails=" + event.getDetails() + "\nstart=" + event.getStart() + "\nend=" + event.getEnd());
+		Log.d(EventDataSource.class.getName() + ".createEvent", "id=" + event.getId() + "\ngoogle_id=" + event.getGoogleId() + "\ntitle=" + event.getTitle() + "\ndetails=" + event.getDetails() + "\nstart=" + event.getStart() + "\nend=" + event.getEnd());
 		ContentValues values = new ContentValues();
 		values.put(EventTable.COLUMN_ID, event.getId());
+		values.put(EventTable.COLUMN_GOOGLEID, event.getGoogleId());
 		values.put(EventTable.COLUMN_TITLE, event.getTitle());
 		values.put(EventTable.COLUMN_DETAILS, event.getDetails());
 		values.put(EventTable.COLUMN_START, event.getStart());
@@ -133,6 +136,7 @@ public class EventDataSource {
 	public int updateEvent(Event event) {
 		ContentValues values = new ContentValues();
 		values.put(EventTable.COLUMN_TITLE, event.getTitle());
+		values.put(EventTable.COLUMN_GOOGLEID, event.getGoogleId());
 		values.put(EventTable.COLUMN_DETAILS, event.getDetails());
 		values.put(EventTable.COLUMN_START, event.getStart());
 		values.put(EventTable.COLUMN_END, event.getEnd());
@@ -147,6 +151,7 @@ public class EventDataSource {
 			return null;
 		Event event = new Event();
 		event.setId(cursor.getInt(cursor.getColumnIndex(EventTable.COLUMN_ID)));
+		event.setGoogleId(cursor.getInt(cursor.getColumnIndex(EventTable.COLUMN_GOOGLEID)));
 		event.setTitle(cursor.getString(cursor.getColumnIndex(EventTable.COLUMN_TITLE)));
 		event.setDetails(cursor.getString(cursor.getColumnIndex(EventTable.COLUMN_DETAILS)));
 		event.setStart(cursor.getString(cursor.getColumnIndex(EventTable.COLUMN_START)));

@@ -1,7 +1,7 @@
 package com.cs307.ezride.database;
 
 public class Event {
-	private int id;
+	private int id, google_id;
 	private String title, details, start, end;
 	
 	public int getId() {
@@ -10,6 +10,14 @@ public class Event {
 	
 	public void setId(int id) {
 		this.id = id;
+	}
+	
+	public int getGoogleId() {
+		return this.google_id;
+	}
+	
+	public void setGoogleId(int google_id) {
+		this.google_id = google_id;
 	}
 	
 	public String getTitle() {

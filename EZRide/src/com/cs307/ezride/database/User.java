@@ -2,7 +2,7 @@ package com.cs307.ezride.database;
 
 public class User {
 	private int id;
-	private String username, password, realname, email, phone, address, bio;
+	private String google_id, realname, email, phone, address, bio, avatarUrl;
 	
 	public int getId() {
 		return this.id;
@@ -12,20 +12,12 @@ public class User {
 		this.id = id;
 	}
 	
-	public String getUsername() {
-		return this.username;
+	public String getGoogleId() {
+		return this.google_id;
 	}
 	
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	
-	public String getPassword() {
-		return this.password;
-	}
-	
-	public void setPassword(String password) {
-		this.password = password;
+	public void setGoogleId(String google_id) {
+		this.google_id = google_id;
 	}
 	
 	public String getRealname() {
@@ -68,8 +60,16 @@ public class User {
 		this.bio = bio;
 	}
 	
+	public String getAvatarUrl() {
+		return this.avatarUrl;
+	}
+	
+	public void setAvatarUrl(String avatarUrl) {
+		this.avatarUrl = avatarUrl;
+	}
+	
 	@Override
 	public String toString() {
-		return Integer.toString(id) + " " + username + " " + password + " " + realname + " " + email + " " + phone + " " + address + " " + bio;
+		return Integer.toString(id) + " " + google_id + " " + realname + " " + email + " " + phone + " " + address + " " + bio;
 	}
 }

@@ -6,6 +6,7 @@ import android.util.Log;
 public class EventTable {
 	public static final String TABLE_NAME = "events";
 	public static final String COLUMN_ID = "eventid";
+	public static final String COLUMN_GOOGLEID = "google_id";
 	public static final String COLUMN_TITLE = "title";
 	public static final String COLUMN_DETAILS = "details";
 	public static final String COLUMN_START = "start";
@@ -14,6 +15,7 @@ public class EventTable {
 	private static final String DATABASE_CREATE = "CREATE TABLE "
 			+ TABLE_NAME + "("
 			+ COLUMN_ID + " INTEGER PRIMARY KEY, "
+			+ COLUMN_GOOGLEID + " INTEGER, "
 			+ COLUMN_TITLE + " TEXT, "
 			+ COLUMN_DETAILS + " TEXT, "
 			+ COLUMN_START + " TEXT, "

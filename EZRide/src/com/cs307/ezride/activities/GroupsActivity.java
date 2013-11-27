@@ -103,8 +103,6 @@ public class GroupsActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				Log.d("EZRIDE_ON_CLICK", "clicked: " + input.getText().toString());
 				RequestParams params = new RequestParams();
-				params.put("username", user.getUsername());
-				params.put("password", user.getPassword());
 				params.put("groupname", input.getText().toString());
 				createGroup(params);
 			}
@@ -134,8 +132,6 @@ public class GroupsActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				Log.d("EZRIDE_ON_CLICK", "clicked: " + input.getText().toString());
 				RequestParams params = new RequestParams();
-				params.put("username", user.getUsername());
-				params.put("password", user.getPassword());
 				params.put("groupname", input.getText().toString());
 				joinGroup(params);
 			}
@@ -206,8 +202,6 @@ public class GroupsActivity extends Activity {
 	
 	private void refreshGroups() {
 		RequestParams params = new RequestParams();
-		params.put("username", user.getUsername());
-		params.put("password", user.getPassword());
 		
 		AsyncHttpClient client = new AsyncHttpClient();
 		client.post("http://ezride-weiqing.rhcloud.com/androidgetusergroups.php", params, new AsyncHttpResponseHandler() {

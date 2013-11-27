@@ -2,7 +2,6 @@ package com.cs307.ezride.activities;
 
 import com.cs307.ezride.R;
 import com.cs307.ezride.database.*;
-
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
 import com.google.android.gms.auth.UserRecoverableAuthException;
@@ -13,7 +12,6 @@ import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallback
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
 import com.google.android.gms.plus.PlusClient;
 import com.google.android.gms.plus.PlusClient.OnAccessRevokedListener;
-
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -28,7 +26,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.IntentSender.SendIntentException;
 import android.content.SharedPreferences.Editor;
+import android.support.v4.app.NavUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Toast;
@@ -40,6 +41,7 @@ public class MainActivity extends Activity implements OnClickListener, Connectio
 	private ConnectionResult mConnectionResult = null;
 	private DBHelper dbHelper = null;
 	private SharedPreferences mPrefs = null;
+	private UserDataSource mUserDataSource = null;
 
 	
 	@Override
@@ -53,6 +55,7 @@ public class MainActivity extends Activity implements OnClickListener, Connectio
 		dbHelper = new DBHelper(this);
 		dbHelper.getReadableDatabase();
 		dbHelper.close();
+		mUserDataSource = new UserDataSource(this);
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		if (GooglePlayServicesUtil.isGooglePlayServicesAvailable(this) == ConnectionResult.SUCCESS) {
@@ -92,6 +95,39 @@ public class MainActivity extends Activity implements OnClickListener, Connectio
 		super.onStop();
 		if (mPlusClient != null)
 			mPlusClient.disconnect();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.main, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			// This ID represents the Home or Up button. In the case of this
+			// activity, the Up button is shown. Use NavUtils to allow users
+			// to navigate up one level in the application structure. For
+			// more details, see the Navigation pattern on Android Design:
+			//
+			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
+			//
+			NavUtils.navigateUpFromSameTask(this);
+			return true;
+		case R.id.action_map_view:
+			MapViewButton_onClick();
+			return false;
+		case R.id.action_groups_view:
+			GroupsViewButton_onClick();
+			return false;
+		case R.id.action_calendar_view:
+			CalendarViewButton_onClick();
+			return false;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 	
 	@Override
@@ -145,6 +181,7 @@ public class MainActivity extends Activity implements OnClickListener, Connectio
 					Log.d(MainActivity.class.getName(), token);
 					Editor prefEditor = mPrefs.edit();
 					prefEditor.putString("access_token", token);
+					prefEditor.putString("email", accountName);
 					prefEditor.commit();
 				} catch (UserRecoverableAuthException e) {
 					startActivityForResult(e.getIntent(), REQUEST_CODE_RESOLVE_ERR);
@@ -176,6 +213,19 @@ public class MainActivity extends Activity implements OnClickListener, Connectio
 			public void onSuccess(int statusCode, org.apache.http.Header[] headers, byte[] responseBody) {
 				String response = new String(responseBody);
 				Log.d("EZRIDE_SERVER_RESULT", response);
+				
+				int id = Integer.parseInt(response.substring(7, response.indexOf("\n")));
+				String google_id = response.substring(response.indexOf("google_id") + 10, response.indexOf("\n", response.indexOf("google_id")));
+				String name = response.substring(response.indexOf("name") + 5, response.indexOf("\n", response.indexOf("name")));
+				String email = response.substring(response.indexOf("email") + 5, response.indexOf("\n", response.indexOf("email")));
+				String phone = response.substring(response.indexOf("phonenumber") + 12, response.indexOf("\n", response.indexOf("phonenumber")));
+				String address = response.substring(response.indexOf("address") + 8, response.indexOf("\n", response.indexOf("address")));
+				String profile = response.substring(response.indexOf("profile") + 8, response.indexOf("\n", response.indexOf("profile")));
+				String avatarUrl = response.substring(response.indexOf("avatarUrl") + 10, response.indexOf("\n", response.indexOf("avatarUrl")));
+				
+				if (mUserDataSource.addUser(id, google_id, name, email, phone, address, profile, avatarUrl) == null) {
+					Log.w(MainActivity.class.getName() + ".onConnected", "Failed to add user to data store.");
+				}
 			}
 			
 			@Override
@@ -229,36 +279,19 @@ public class MainActivity extends Activity implements OnClickListener, Connectio
 		}
 	}
 	
-	/*@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-	
-	public void ezrideLogin(View view) {
-		Intent intent = new Intent(this, EZRideLoginSignupActivity.class);
+	private void MapViewButton_onClick() {
+		Intent intent = new Intent(this, MapActivity.class);
 		startActivity(intent);
 	}
 	
-	public void gplusLogin(View view) {
-		Intent intent = new Intent(this, ProfileActivity.class);
-		startActivity(intent);
-	}
-	
-	public void fbLogin(View view) {
+	private void GroupsViewButton_onClick() {
 		Intent intent = new Intent(this, GroupsActivity.class);
 		startActivity(intent);
 	}
 	
-	public void testCalendarActivity(View view) {
+	private void CalendarViewButton_onClick() {
 		Intent intent = new Intent(this, CalendarActivity.class);
 		startActivity(intent);
 	}
-	
-	public void testMapActivity(View view) {
-		Intent intent = new Intent(this, MapActivity.class);
-		startActivity(intent);
-	} */
 
 }
