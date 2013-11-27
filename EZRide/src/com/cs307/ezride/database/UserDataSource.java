@@ -1,5 +1,7 @@
 package com.cs307.ezride.database;
 
+import com.google.android.gms.plus.model.people.Person;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -62,6 +64,33 @@ public class UserDataSource {
 			Log.w(UserDataSource.class.getName(), "SharedPreferences variable was not initialized somehow.");
 			return null;
 		}
+	}
+	
+	/**
+	 * Creates a user in Shared Preferences from Person object. 
+	 *
+	 * @param	person		a Person object containing the information from the user's GPlus profile.
+	 * @return				an User object containing the information of the user created. null if creation failed.
+	 */
+	public User createUser(Person person) {
+		if (mPrefs != null) {
+			mPrefsEditor = mPrefs.edit();
+			if (person.hasAboutMe())
+				mPrefsEditor.putString(PREF_BIO, person.getAboutMe());
+			if (person.hasId())
+				mPrefsEditor.putInt(PREF_ID, Integer.parseInt(person.getId()));
+			if (person.hasName())
+				mPrefsEditor.putString(PREF_REALNAME, person.getDisplayName());
+			
+			if (!mPrefsEditor.commit()) {
+				Log.w(UserDataSource.class.getName(), "Create user commit failed.");
+				return null;
+			} else {
+				User user = new User();
+				return user;
+			} 
+		}
+		return null;
 	}
 	
 	/**

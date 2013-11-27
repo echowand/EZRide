@@ -226,7 +226,7 @@ public class GroupsActivity extends Activity {
 					groupidindex = (response.indexOf("\n", response.indexOf("datecreated", groupidindex)) + 1);
 					Log.d("GroupsActivity.refreshGroups()", "id=" + g_id + "\nname=" + g_name + "\ndatecreated=" + g_datecreated + "\ngroupidindex=" + groupidindex);
 					
-					if (groupdatasource.createGroup(g_id, g_name, g_datecreated) == null) {
+					if (groupdatasource.addGroup(g_id, g_name, g_datecreated) == null) {
 						Toast.makeText(getBaseContext(), "Refresh failed. Please try again.", Toast.LENGTH_LONG).show();
 						break;
 					}

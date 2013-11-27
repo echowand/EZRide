@@ -29,17 +29,17 @@ public class GroupDataSource {
 	public void recreate() {
 		database.execSQL("DROP TABLE IF EXISTS " + GroupTable.TABLE_NAME);
 		GroupTable.onCreate(database);
-		Log.w(GroupDataSource.class.getName(), GroupTable.TABLE_NAME + " table recreated.");
 	}
 	
 	/**
-	 * Creates a group in the database. 
+	 * Adds a group to the database, and creates a Group object of the data in the process. 
 	 *
-	 * @param	id			the id of the group from central database.
-	 * @param	name		the group's actual name.
-	 * @param	datecreated	the group's creation date and time.
+	 * @param	id				the id of the group from central database.
+	 * @param	name			the group's actual name.
+	 * @param	datecreated		the group's creation date and time.
+	 * @return					the data of the group bundled into a Group object
 	 */
-	public Group createGroup(int id, String name, String datecreated) {
+	public Group addGroup(int id, String name, String datecreated) {
 		Log.d("GroupDataSource.createGroup", "id=" + id + "\nname=" + name + "\ndatecreated=" + datecreated);
 		ContentValues values = new ContentValues();
 		values.put(GroupTable.COLUMN_ID, id);
@@ -55,6 +55,50 @@ public class GroupDataSource {
 		return group;
 	}
 	
+	/**
+	 * Adds a group to the database, and creates a Group object of the data in the process. 
+	 *
+	 * @param	id				the id of the group from central database.
+	 * @param	name			the group's actual name.
+	 * @param	datecreated		the group's creation date and time.
+	 * @return					null if failure, the original object on success
+	 */
+	public Group addGroup(Group group) {
+		Log.d("GroupDataSource.createGroup", "id=" + group.getId() + "\nname=" + group.getName() + "\ndatecreated=" + group.getDateCreated());
+		ContentValues values = new ContentValues();
+		values.put(GroupTable.COLUMN_ID, group.getId());
+		values.put(GroupTable.COLUMN_NAME, group.getName());
+		values.put(GroupTable.COLUMN_DATECREATED, group.getDateCreated());
+		
+		long insertId = database.insert(GroupTable.TABLE_NAME, null, values);
+		Cursor cursor = database.query(GroupTable.TABLE_NAME, allColumns, GroupTable.COLUMN_ID + " = " + insertId, null, null, null, null);
+		
+		if (cursor == null)
+			return null;
+		else
+			return group;
+	}
+	
+	/**
+	 * Deletes a group from the database. 
+	 *
+	 * @param	id				the id of the group from central database.
+	 * @return					the number of rows deleted. If more than 1 is returned, there is a problem with the database.
+	 */
+	public int deleteGroup(int id) {
+		return database.delete(GroupTable.TABLE_NAME, GroupTable.COLUMN_ID + " = " + id, null);
+	}
+		
+	/**
+	 * Deletes a group from the database. 
+	 *
+	 * @param	group			the group you wish to delete.
+	 * @return					the number of rows deleted. If more than 1 is returned, there is a problem with the database.
+	 */
+	public int deleteGroup(Group group) {
+		return database.delete(GroupTable.TABLE_NAME, GroupTable.COLUMN_ID + " = " + group.getId(), null);
+	}
+	
 	public int updateGroup(Group group) {
 		ContentValues values = new ContentValues();
 		values.put(GroupTable.COLUMN_NAME, group.getName());
@@ -63,17 +107,6 @@ public class GroupDataSource {
 		String whereClause = GroupTable.COLUMN_ID + "=?";
 		String[] whereArgs = { Integer.toString(group.getId()) };
 		return database.update(GroupTable.TABLE_NAME, values, whereClause, whereArgs);
-	}
-	
-	/**
-	 * Deletes the group's info from the database. 
-	 *
-	 * @param	user	the group to be deleted.
-	 */
-	public void deleteGroup(Group group) {
-		int id = group.getId();
-		database.delete(GroupTable.TABLE_NAME, UserDataSource.PREF_ID + " = " + id, null);
-		Log.w(GroupDataSource.class.getName(), "Group deleted with id: " + id);
 	}
 	
 	/**

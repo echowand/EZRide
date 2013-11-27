@@ -18,11 +18,11 @@ public class GroupTable {
 	
 	public static void onCreate(SQLiteDatabase db) {
 		db.execSQL(DATABASE_CREATE);
-		Log.w(GroupTable.class.getName(), TABLE_NAME + " table created.");
+		Log.d(GroupTable.class.getName(), TABLE_NAME + " table created.");
 	}
 	
 	public static void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.w(GroupTable.class.getName(), "Upgrading database from version "
+		Log.d(GroupTable.class.getName(), "Upgrading database from version "
 				+ oldVersion + " to " + newVersion
 				+ ", which will destroy all data.");
 		db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);

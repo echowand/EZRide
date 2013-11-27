@@ -8,10 +8,6 @@
 package com.cs307.ezride;
 
 public final class R {
-    public static final class array {
-        public static final int groups_view_items_array=0x7f090001;
-        public static final int map_view_items_array=0x7f090000;
-    }
     public static final class attr {
         /** 
     The size of the ad. It must be one of BANNER, FULL_BANNER, LEADERBOARD,
@@ -216,86 +212,48 @@ containing a value of this type.
         public static final int ic_plusone_small_off_client=0x7f020020;
         public static final int ic_plusone_standard_off_client=0x7f020021;
         public static final int ic_plusone_tall_off_client=0x7f020022;
+        public static final int login_screen=0x7f020023;
     }
     public static final class id {
-        public static final int action_settings=0x7f050029;
-        public static final int activity_groups=0x7f05000f;
-        public static final int activity_profile=0x7f050019;
+        public static final int action_settings=0x7f05000d;
+        public static final int activity_groups=0x7f050006;
         public static final int calendar=0x7f050005;
-        public static final int change_password_button=0x7f050024;
-        public static final int ezride_enter_bio=0x7f05000d;
-        public static final int ezride_enter_email=0x7f05000c;
-        public static final int ezride_enter_password=0x7f05000a;
-        public static final int ezride_enter_username=0x7f050008;
-        public static final int ezride_login_button=0x7f05000b;
-        public static final int ezride_login_progressbar=0x7f050006;
-        public static final int ezride_login_screen_button=0x7f050015;
-        public static final int ezride_register_button=0x7f05000e;
-        public static final int ezride_signup_button=0x7f050009;
-        public static final int fb_login_screen_button=0x7f050013;
-        public static final int gplus_login_screen_button=0x7f050012;
-        public static final int groups_action_add=0x7f05002a;
-        public static final int groups_action_join=0x7f05002b;
-        public static final int groups_action_refresh=0x7f05002c;
-        public static final int groups_activity_listview=0x7f050010;
+        public static final int gplus_logout_button=0x7f05000b;
+        public static final int gplus_sign_in_button=0x7f05000a;
+        public static final int groups_action_add=0x7f05000e;
+        public static final int groups_action_join=0x7f05000f;
+        public static final int groups_action_refresh=0x7f050010;
+        public static final int groups_activity_listview=0x7f050007;
         public static final int hybrid=0x7f050004;
-        public static final int map=0x7f050018;
+        public static final int map=0x7f05000c;
         public static final int none=0x7f050000;
         public static final int normal=0x7f050001;
-        public static final int profile_action_save=0x7f05002d;
-        public static final int profile_address_field=0x7f050021;
-        public static final int profile_address_label=0x7f050020;
-        public static final int profile_bio_field=0x7f050023;
-        public static final int profile_bio_label=0x7f050022;
-        public static final int profile_email_field=0x7f05001d;
-        public static final int profile_email_label=0x7f05001b;
-        public static final int profile_name_field=0x7f05001c;
-        public static final int profile_name_label=0x7f050028;
-        public static final int profile_phone_field=0x7f05001f;
-        public static final int profile_phone_label=0x7f05001e;
-        public static final int profile_picture=0x7f05001a;
-        public static final int profile_submit=0x7f050027;
-        public static final int profile_username=0x7f050026;
         public static final int satellite=0x7f050002;
         public static final int terrain=0x7f050003;
-        public static final int test_calendar_activity_button=0x7f050014;
-        public static final int test_map_activity_button=0x7f050017;
-        public static final int textView1=0x7f050025;
-        public static final int textview_logging_in=0x7f050007;
-        public static final int welcome_label=0x7f050011;
-        public static final int welcome_message_label=0x7f050016;
+        public static final int welcome_label=0x7f050008;
+        public static final int welcome_message_label=0x7f050009;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f070000;
     }
     public static final class layout {
         public static final int activity_calendar=0x7f030000;
-        public static final int activity_ezride_login=0x7f030001;
-        public static final int activity_ezride_login_signup=0x7f030002;
-        public static final int activity_ezride_sign_up=0x7f030003;
-        public static final int activity_groups=0x7f030004;
-        public static final int activity_main=0x7f030005;
-        public static final int activity_map=0x7f030006;
-        public static final int activity_profile=0x7f030007;
-        public static final int activity_test=0x7f030008;
-        public static final int drawer_list_item=0x7f030009;
-        public static final int groups_item_simple=0x7f03000a;
-        public static final int profile_password_popup=0x7f03000b;
+        public static final int activity_groups=0x7f030001;
+        public static final int activity_main=0x7f030002;
+        public static final int activity_map=0x7f030003;
+        public static final int drawer_list_item=0x7f030004;
+        public static final int groups_item_simple=0x7f030005;
+        public static final int profile_password_popup=0x7f030006;
     }
     public static final class menu {
-        public static final int calendar=0x7f0b0000;
-        public static final int ezride_login=0x7f0b0001;
-        public static final int ezride_login_signup=0x7f0b0002;
-        public static final int ezride_sign_up=0x7f0b0003;
-        public static final int groups=0x7f0b0004;
-        public static final int main=0x7f0b0005;
-        public static final int map=0x7f0b0006;
-        public static final int profile=0x7f0b0007;
-        public static final int test=0x7f0b0008;
+        public static final int calendar=0x7f0a0000;
+        public static final int groups=0x7f0a0001;
+        public static final int main=0x7f0a0002;
+        public static final int map=0x7f0a0003;
     }
     public static final class string {
         public static final int action_settings=0x7f06001b;
-        public static final int action_websearch=0x7f06002c;
+        public static final int action_websearch=0x7f060024;
         public static final int app_name=0x7f06001a;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
@@ -320,7 +278,7 @@ containing a value of this type.
         [CHAR LIMIT=70] 
          */
         public static final int auth_client_using_bad_version_title=0x7f060014;
-        public static final int bio=0x7f06002b;
+        public static final int bio=0x7f060023;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -392,39 +350,33 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f060013;
-        public static final int debug_calendar_activity_button=0x7f06003b;
-        public static final int debug_groups_activity_button=0x7f06003a;
-        public static final int debug_map_activity_button=0x7f06003c;
-        public static final int debug_profile_activity_button=0x7f060039;
-        public static final int drawer_close=0x7f06002a;
-        public static final int drawer_open=0x7f060029;
-        public static final int email=0x7f060024;
-        public static final int ezride_login_button=0x7f06001f;
-        public static final int fb_login_button=0x7f060020;
-        public static final int gplus_login_button=0x7f060021;
-        public static final int groups_action_add=0x7f060032;
-        public static final int groups_action_join=0x7f060033;
-        public static final int groups_action_refresh=0x7f060034;
-        public static final int groups_popup_add_button_add=0x7f060036;
-        public static final int groups_popup_add_button_cancel=0x7f060038;
-        public static final int groups_popup_add_button_clear=0x7f060037;
-        public static final int groups_popup_add_name=0x7f060035;
+        public static final int debug_calendar_activity_button=0x7f060034;
+        public static final int debug_groups_activity_button=0x7f060033;
+        public static final int debug_map_activity_button=0x7f060035;
+        public static final int debug_profile_activity_button=0x7f060032;
+        public static final int drawer_close=0x7f060022;
+        public static final int drawer_open=0x7f060021;
+        public static final int groups_action_add=0x7f06002b;
+        public static final int groups_action_join=0x7f06002c;
+        public static final int groups_action_refresh=0x7f06002d;
+        public static final int groups_popup_add_button_add=0x7f06002f;
+        public static final int groups_popup_add_button_cancel=0x7f060031;
+        public static final int groups_popup_add_button_clear=0x7f060030;
+        public static final int groups_popup_add_name=0x7f06002e;
         public static final int hello_world=0x7f06001c;
-        public static final int logging_in=0x7f06003d;
-        public static final int login=0x7f060027;
-        public static final int password=0x7f060025;
-        public static final int profile_action_save=0x7f060031;
-        public static final int realname=0x7f06003e;
-        public static final int signup=0x7f060026;
-        public static final int title_activity_calendar=0x7f06003f;
-        public static final int title_activity_ezride_login=0x7f060030;
-        public static final int title_activity_ezride_login_signup=0x7f060022;
-        public static final int title_activity_ezride_sign_up=0x7f06002f;
-        public static final int title_activity_groups=0x7f06002d;
-        public static final int title_activity_map=0x7f060028;
-        public static final int title_activity_profile=0x7f06002e;
-        public static final int title_activity_test=0x7f060040;
-        public static final int username=0x7f060023;
+        public static final int logging_in=0x7f060036;
+        public static final int login=0x7f06001f;
+        public static final int logout=0x7f060020;
+        public static final int profile_action_save=0x7f06002a;
+        public static final int realname=0x7f060037;
+        public static final int title_activity_calendar=0x7f060038;
+        public static final int title_activity_ezride_login=0x7f060029;
+        public static final int title_activity_ezride_sign_up=0x7f060028;
+        public static final int title_activity_gplus_login=0x7f06003a;
+        public static final int title_activity_groups=0x7f060025;
+        public static final int title_activity_map=0x7f060027;
+        public static final int title_activity_profile=0x7f060026;
+        public static final int title_activity_test=0x7f060039;
         public static final int welcome=0x7f06001d;
         public static final int welcome_text=0x7f06001e;
     }
@@ -452,12 +404,14 @@ containing a value of this type.
     
  API 14 theme customizations can go here. 
          */
-        public static final int AppBaseTheme=0x7f0a0000;
+        public static final int AppBaseTheme=0x7f090000;
         /**  Application theme. 
  All customizations that are NOT specific to a particular API-level can go here. 
          */
-        public static final int AppTheme=0x7f0a0001;
-        public static final int LoginFormContainer=0x7f0a0002;
+        public static final int AppTheme=0x7f090001;
+        public static final int LoginFormContainer=0x7f090004;
+        public static final int Theme_HighlightCopy=0x7f090002;
+        public static final int Theme_HighlightCopy_ActionBar=0x7f090003;
     }
     public static final class styleable {
         /** Attributes that can be used with a AdsAttrs.

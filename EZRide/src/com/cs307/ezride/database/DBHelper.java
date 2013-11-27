@@ -16,11 +16,13 @@ public class DBHelper extends SQLiteOpenHelper {
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		GroupTable.onCreate(db);
+		EventTable.onCreate(db);
 	}
 	
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		GroupTable.onUpgrade(db, oldVersion, newVersion);
+		EventTable.onUpgrade(db, oldVersion, newVersion);
 	}
 
 }
