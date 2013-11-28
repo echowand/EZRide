@@ -73,6 +73,8 @@ public class UserDataSource {
 				user.setPhone(phone);
 			}
 			
+			mPrefsEditor.putBoolean("isLoggedIn", true);
+			
 			if (!mPrefsEditor.commit()) {
 				Log.w(UserDataSource.class.getName(), "Create user commit failed.");
 				return null;
@@ -99,6 +101,7 @@ public class UserDataSource {
 			mPrefsEditor.remove(PREF_ADDRESS);
 			mPrefsEditor.remove(PREF_BIO);
 			mPrefsEditor.remove(PREF_AVATARURL);
+			mPrefsEditor.putBoolean("isLoggedIn", false);
 			if (mPrefsEditor.commit())
 				return true;
 			else {

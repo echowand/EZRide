@@ -21,33 +21,4 @@
         android:text="@string/welcome"
         android:textSize="55sp" />
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/gplus_sign_in_button"
-        android:layout_width="250dp"
-        android:layout_height="75dp"
-        android:layout_below="@+id/welcome_message_label"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="38dp" />
-
-    <Button
-        android:id="@+id/gplus_logout_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/gplus_sign_in_button"
-        android:layout_alignRight="@+id/gplus_sign_in_button"
-        android:layout_below="@+id/gplus_sign_in_button"
-        android:text="@string/logout" />
-
-    <TextView
-        android:id="@+id/welcome_message_label"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/welcome_label"
-        android:layout_below="@+id/welcome_label"
-        android:layout_marginTop="18dp"
-        android:gravity="center"
-        android:text="@string/welcome_text"
-        android:textColor="#ffffff"
-        android:textSize="12sp" />
-
 </RelativeLayout>

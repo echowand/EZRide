@@ -307,17 +307,18 @@ containing a value of this type.
         public static final int login_screen=0x7f020023;
     }
     public static final class id {
-        public static final int action_calendar_view=0x7f050017;
-        public static final int action_groups_view=0x7f050016;
-        public static final int action_map_view=0x7f050015;
-        public static final int action_settings=0x7f050012;
-        public static final int activity_groups=0x7f05000b;
+        public static final int action_calendar_view=0x7f050018;
+        public static final int action_groups_view=0x7f050017;
+        public static final int action_map_view=0x7f050016;
+        public static final int action_settings=0x7f050013;
+        public static final int activity_groups=0x7f05000e;
+        public static final int activity_main_fragment_placeholder=0x7f050010;
         public static final int calendar=0x7f05000a;
-        public static final int gplus_logout_button=0x7f050010;
-        public static final int gplus_sign_in_button=0x7f05000e;
-        public static final int groups_action_add=0x7f050013;
-        public static final int groups_action_join=0x7f050014;
-        public static final int groups_activity_listview=0x7f05000c;
+        public static final int fragment_test_logout_button=0x7f050012;
+        public static final int gplus_sign_in_button=0x7f05000d;
+        public static final int groups_action_add=0x7f050014;
+        public static final int groups_action_join=0x7f050015;
+        public static final int groups_activity_listview=0x7f05000f;
         public static final int hybrid=0x7f050009;
         public static final int inside=0x7f050000;
         public static final int map=0x7f050011;
@@ -329,35 +330,38 @@ containing a value of this type.
         public static final int ptr_text=0x7f050003;
         public static final int satellite=0x7f050007;
         public static final int terrain=0x7f050008;
-        public static final int welcome_label=0x7f05000d;
-        public static final int welcome_message_label=0x7f05000f;
+        public static final int welcome_label=0x7f05000b;
+        public static final int welcome_message_label=0x7f05000c;
     }
     public static final class integer {
         public static final int google_play_services_version=0x7f090000;
     }
     public static final class layout {
         public static final int activity_calendar=0x7f030000;
-        public static final int activity_groups=0x7f030001;
-        public static final int activity_main=0x7f030002;
-        public static final int activity_map=0x7f030003;
-        public static final int default_header=0x7f030004;
-        public static final int drawer_list_item=0x7f030005;
-        public static final int groups_item_simple=0x7f030006;
-        public static final int profile_password_popup=0x7f030007;
+        public static final int activity_gplus_login=0x7f030001;
+        public static final int activity_groups=0x7f030002;
+        public static final int activity_groups_item_simple=0x7f030003;
+        public static final int activity_main=0x7f030004;
+        public static final int activity_main_fragment=0x7f030005;
+        public static final int activity_map=0x7f030006;
+        public static final int default_header=0x7f030007;
+        public static final int fragment_map=0x7f030008;
+        public static final int fragment_test=0x7f030009;
     }
     public static final class menu {
-        public static final int calendar=0x7f0b0000;
-        public static final int groups=0x7f0b0001;
-        public static final int main=0x7f0b0002;
-        public static final int map=0x7f0b0003;
+        public static final int activity_calendar_menu=0x7f0b0000;
+        public static final int activity_gplus_login_menu=0x7f0b0001;
+        public static final int activity_groups_menu=0x7f0b0002;
+        public static final int activity_main_fragment_menu=0x7f0b0003;
+        public static final int activity_main_menu=0x7f0b0004;
+        public static final int activity_map_menu=0x7f0b0005;
     }
     public static final class string {
-        public static final int action_calendar_view=0x7f080021;
-        public static final int action_groups_view=0x7f080020;
-        public static final int action_map_view=0x7f08001f;
-        public static final int action_settings=0x7f08001e;
-        public static final int action_websearch=0x7f08002a;
-        public static final int app_name=0x7f08001d;
+        public static final int action_calendar_view=0x7f080022;
+        public static final int action_groups_view=0x7f080021;
+        public static final int action_map_view=0x7f080020;
+        public static final int action_settings=0x7f08001f;
+        public static final int app_name=0x7f08001e;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
          */
@@ -381,7 +385,7 @@ containing a value of this type.
         [CHAR LIMIT=70] 
          */
         public static final int auth_client_using_bad_version_title=0x7f080017;
-        public static final int bio=0x7f080029;
+        public static final int bio=0x7f080027;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -453,35 +457,26 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f080016;
-        public static final int debug_calendar_activity_button=0x7f08003a;
-        public static final int debug_groups_activity_button=0x7f080039;
-        public static final int debug_map_activity_button=0x7f08003b;
-        public static final int debug_profile_activity_button=0x7f080038;
-        public static final int drawer_close=0x7f080028;
-        public static final int drawer_open=0x7f080027;
-        public static final int groups_action_add=0x7f080031;
-        public static final int groups_action_join=0x7f080032;
-        public static final int groups_action_refresh=0x7f080033;
-        public static final int groups_popup_add_button_add=0x7f080035;
-        public static final int groups_popup_add_button_cancel=0x7f080037;
-        public static final int groups_popup_add_button_clear=0x7f080036;
-        public static final int groups_popup_add_name=0x7f080034;
-        public static final int hello_world=0x7f080022;
+        public static final int groups_action_add=0x7f08002e;
+        public static final int groups_action_join=0x7f08002f;
+        public static final int groups_action_refresh=0x7f080030;
+        public static final int groups_popup_add_button_add=0x7f080032;
+        public static final int groups_popup_add_button_cancel=0x7f080034;
+        public static final int groups_popup_add_button_clear=0x7f080033;
+        public static final int groups_popup_add_name=0x7f080031;
+        public static final int hello_world=0x7f08001d;
         public static final int login=0x7f080025;
         public static final int logout=0x7f080026;
-        public static final int profile_action_save=0x7f080030;
+        public static final int profile_action_save=0x7f08002d;
         public static final int pull_to_refresh_pull_label=0x7f080000;
         public static final int pull_to_refresh_refreshing_label=0x7f080002;
         public static final int pull_to_refresh_release_label=0x7f080001;
-        public static final int realname=0x7f08003c;
-        public static final int title_activity_calendar=0x7f08003d;
-        public static final int title_activity_ezride_login=0x7f08002f;
-        public static final int title_activity_ezride_sign_up=0x7f08002e;
-        public static final int title_activity_gplus_login=0x7f08003f;
-        public static final int title_activity_groups=0x7f08002b;
-        public static final int title_activity_map=0x7f08002d;
-        public static final int title_activity_profile=0x7f08002c;
-        public static final int title_activity_test=0x7f08003e;
+        public static final int title_activity_calendar=0x7f08002a;
+        public static final int title_activity_gplus_login=0x7f08002b;
+        public static final int title_activity_groups=0x7f080028;
+        public static final int title_activity_main_fragment=0x7f08002c;
+        public static final int title_activity_map=0x7f080029;
+        public static final int title_activity_map_fragment=0x7f080035;
         public static final int welcome=0x7f080023;
         public static final int welcome_text=0x7f080024;
     }

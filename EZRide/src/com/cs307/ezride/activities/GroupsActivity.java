@@ -75,7 +75,7 @@ public class GroupsActivity extends Activity {
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.groups, menu);
+		getMenuInflater().inflate(R.menu.activity_groups_menu, menu);
 		return true;
 	}
 
@@ -261,7 +261,7 @@ public class GroupsActivity extends Activity {
 					mGroupNamesArray.add(mGroups[i].getName());
 				}
 				
-				mGroupNamesArrayAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.groups_item_simple, mGroupNamesArray);
+				mGroupNamesArrayAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.activity_groups_item_simple, mGroupNamesArray);
 				mGroupsList = (ListView)findViewById(R.id.groups_activity_listview);
 				mGroupsList.setAdapter(mGroupNamesArrayAdapter);
 				
