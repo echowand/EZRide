@@ -8,7 +8,7 @@
     <string name="action_calendar_view">Calendar View</string>
     <string name="hello_world">Hello world!</string>
     <string name="welcome">Welcome To EZRide!</string>
-    <string name="welcome_text">You have a few sign in options. You can sign in with Google+ (which will allow you to magically download your Google Calendar seamlessly), Facebook, or an EZRide account. Don\'t have an account? By signing in with Google+ or Facebook, an account will be auto-generated for you. You can always create an EZRide only account if you\'re not into the whole social networking thing.</string>
+    <string name="welcome_text">In order to make things more simple for you, we decided to use Google Plus as our login system. It allows us to streamline things by utilizing something you have already created, your calendar. It is also cross-platform and anything you do here is reflected on our web app, which can be found at http://ezride-weiqing.rhcloud.com.</string>
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="drawer_open">Open navigation drawer</string>

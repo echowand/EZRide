@@ -272,6 +272,7 @@ public class MainActivity extends Activity implements OnClickListener, Connectio
 			if (mPlusClient.isConnected()) {
 				mPlusClient.clearDefaultAccount();
 				mPlusClient.revokeAccessAndDisconnect(this);
+				mUserDataSource.deleteUser();
 			}
 			break;
 		default:
@@ -282,11 +283,13 @@ public class MainActivity extends Activity implements OnClickListener, Connectio
 	private void MapViewButton_onClick() {
 		Intent intent = new Intent(this, MapActivity.class);
 		startActivity(intent);
+		overridePendingTransition(R.anim.right_in, R.anim.left_out);
 	}
 	
 	private void GroupsViewButton_onClick() {
 		Intent intent = new Intent(this, GroupsActivity.class);
 		startActivity(intent);
+		overridePendingTransition(R.anim.right_in, R.anim.left_out);
 	}
 	
 	private void CalendarViewButton_onClick() {

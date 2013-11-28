@@ -6,6 +6,9 @@ import com.loopj.android.http.*;
 
 import java.util.ArrayList;
 
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -22,13 +25,14 @@ import android.widget.Toast;
 import android.support.v4.app.NavUtils;
 
 public class GroupsActivity extends Activity {
-	private ArrayList<String> mGroupNamesArray;
-	private ArrayAdapter<String> mGroupNamesArrayAdapter;
-	private ListView mGroupsList;
-	private UserDataSource userdatasource = null;
-	private GroupDataSource groupdatasource = null;
-	private User user = null;
-	private Group[] groups = null;
+	private ArrayList<String> mGroupNamesArray = null;
+	private ArrayAdapter<String> mGroupNamesArrayAdapter = null;
+	private ListView mGroupsList = null;
+	private PullToRefreshLayout mPullToRefreshLayout = null;
+	private UserDataSource mUserDataSource = null;
+	private GroupDataSource mGroupDataSource = null;
+	private User mUser = null;
+	private Group[] mGroups = null;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,23 +41,34 @@ public class GroupsActivity extends Activity {
 		// Show the Up button in the action bar.
 		getActionBar().setDisplayHomeAsUpEnabled(true);
 		
-		userdatasource = new UserDataSource(this);
-		groupdatasource = new GroupDataSource(this);
-		groupdatasource.open();
-		user = userdatasource.getUser();
+		mUserDataSource = new UserDataSource(this);
+		mGroupDataSource = new GroupDataSource(this);
+		mGroupDataSource.open();
+		mUser = mUserDataSource.getUser();
 		
-		if (user != null) {
+		if (mUser != null) {
 			refreshGroups();
+			mPullToRefreshLayout = (PullToRefreshLayout)findViewById(R.id.activity_groups);
+			ActionBarPullToRefresh.from(this)
+						.allChildrenArePullable()
+						.listener(new OnRefreshListener() {
+							@Override
+							public void onRefreshStarted(View view) {
+								onRefreshPull();
+							}
+						})
+						.setup(mPullToRefreshLayout);
 		} else {
 			Toast.makeText(getBaseContext(), "You're not logged in. Log in to view your groups.", Toast.LENGTH_LONG).show();
 			finish();
+			overridePendingTransition(R.anim.left_in, R.anim.right_out);
 		}
 	}
 	
 	@Override
 	protected void onDestroy() {
-		if (groupdatasource != null)
-			groupdatasource.close();
+		if (mGroupDataSource != null)
+			mGroupDataSource.close();
 		super.onDestroy();
 	}
 
@@ -76,15 +91,13 @@ public class GroupsActivity extends Activity {
 			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
 			//
 			NavUtils.navigateUpFromSameTask(this);
+			overridePendingTransition(R.anim.left_in, R.anim.right_out);
 			return true;
 		case R.id.groups_action_add:
 			onAddButtonClick();
 			return false;
 		case R.id.groups_action_join:
 			onJoinButtonClick();
-			return false;
-		case R.id.groups_action_refresh:
-			onRefreshButtonClick();
 			return false;
 		}
 		return super.onOptionsItemSelected(item);
@@ -103,6 +116,7 @@ public class GroupsActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				Log.d("EZRIDE_ON_CLICK", "clicked: " + input.getText().toString());
 				RequestParams params = new RequestParams();
+				params.put(UserDataSource.PREF_GOOGLEID, mUser.getGoogleId());
 				params.put("groupname", input.getText().toString());
 				createGroup(params);
 			}
@@ -132,6 +146,7 @@ public class GroupsActivity extends Activity {
 			public void onClick(DialogInterface dialog, int which) {
 				Log.d("EZRIDE_ON_CLICK", "clicked: " + input.getText().toString());
 				RequestParams params = new RequestParams();
+				params.put(UserDataSource.PREF_GOOGLEID, mUser.getGoogleId());
 				params.put("groupname", input.getText().toString());
 				joinGroup(params);
 			}
@@ -148,8 +163,9 @@ public class GroupsActivity extends Activity {
 		dialog.show();
 	}
 	
-	private void onRefreshButtonClick() {
+	private void onRefreshPull() {
 		refreshGroups();
+		mPullToRefreshLayout.setRefreshComplete();
 	}
 	
 	private void createGroup(RequestParams params) {
@@ -163,7 +179,12 @@ public class GroupsActivity extends Activity {
 				if (response.contains("success")) {
 					refreshGroups();
 				} else {
-					Toast.makeText(getBaseContext(), response, Toast.LENGTH_LONG).show();
+					if (response.contains("failed") && (response.contains("user") || response.contains("user2")))
+						Toast.makeText(getBaseContext(), "Failed to verify user details.", Toast.LENGTH_LONG).show();
+					else if ((response.contains("failed") && response.contains("insert")) || (response.contains("group already exists")))
+						Toast.makeText(getBaseContext(), "Group name already exists. Please try another name.", Toast.LENGTH_LONG).show();
+					else
+						Toast.makeText(getBaseContext(), "Unknown server error.", Toast.LENGTH_LONG).show();
 				}
 			}
 			
@@ -187,7 +208,12 @@ public class GroupsActivity extends Activity {
 				if (response.contains("success")) {
 					refreshGroups();
 				} else {
-					Toast.makeText(getBaseContext(), "Failed to join group. Please try again.", Toast.LENGTH_LONG).show();
+					if (response.contains("failed") && response.contains("user"))
+						Toast.makeText(getBaseContext(), "Failed to verify user details.", Toast.LENGTH_LONG).show();
+					else if (response.contains("failed") && response.contains("group"))
+						Toast.makeText(getBaseContext(), "Group does not exist as entered. Perhaps try another variation?", Toast.LENGTH_LONG).show();
+					else
+						Toast.makeText(getBaseContext(), "Unknown server error.", Toast.LENGTH_LONG).show();
 				}
 			}
 			
@@ -202,6 +228,7 @@ public class GroupsActivity extends Activity {
 	
 	private void refreshGroups() {
 		RequestParams params = new RequestParams();
+		params.put(UserDataSource.PREF_GOOGLEID, mUser.getGoogleId());
 		
 		AsyncHttpClient client = new AsyncHttpClient();
 		client.post("http://ezride-weiqing.rhcloud.com/androidgetusergroups.php", params, new AsyncHttpResponseHandler() {
@@ -210,7 +237,7 @@ public class GroupsActivity extends Activity {
 				String response = new String(responseBody);
 				Log.d("GroupsActivity.refreshGroups().response.succeed", response);
 				
-				groupdatasource.recreate();
+				mGroupDataSource.recreate();
 				int numgroups = Integer.parseInt(response.substring(10, response.indexOf("\n")));
 				int groupidindex = response.indexOf("groupid");
 				for (int i = 0;i < numgroups;i++) {
@@ -220,18 +247,18 @@ public class GroupsActivity extends Activity {
 					groupidindex = (response.indexOf("\n", response.indexOf("datecreated", groupidindex)) + 1);
 					Log.d("GroupsActivity.refreshGroups()", "id=" + g_id + "\nname=" + g_name + "\ndatecreated=" + g_datecreated + "\ngroupidindex=" + groupidindex);
 					
-					if (groupdatasource.addGroup(g_id, g_name, g_datecreated) == null) {
+					if (mGroupDataSource.addGroup(g_id, g_name, g_datecreated) == null) {
 						Toast.makeText(getBaseContext(), "Refresh failed. Please try again.", Toast.LENGTH_LONG).show();
 						break;
 					}
 				}
 				
-				groups = groupdatasource.getGroups();
+				mGroups = mGroupDataSource.getGroups();
 				mGroupNamesArray = new ArrayList<String>();
 				
-				for (int i = 0;i < groups.length;i++) {
-					Log.d("GroupsActivity.refreshGroups().groupid", Integer.toString(groups[i].getId()));
-					mGroupNamesArray.add(groups[i].getName());
+				for (int i = 0;i < mGroups.length;i++) {
+					Log.d("GroupsActivity.refreshGroups().groupid", Integer.toString(mGroups[i].getId()));
+					mGroupNamesArray.add(mGroups[i].getName());
 				}
 				
 				mGroupNamesArrayAdapter = new ArrayAdapter<String>(getBaseContext(), R.layout.groups_item_simple, mGroupNamesArray);
