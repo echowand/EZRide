@@ -1,6 +1,7 @@
 package com.cs307.ezride.activities;
 
 import com.cs307.ezride.R;
+import com.cs307.ezride.database.GroupDataSource;
 import com.cs307.ezride.database.UserDataSource;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -36,6 +37,7 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 	private ConnectionResult mConnectionResult = null;
 	private SharedPreferences mPrefs = null;
 	private UserDataSource mUserDataSource = null;
+	private GroupDataSource mGroupDataSource = null;
 	
 	
 	@Override
@@ -44,6 +46,8 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 		setContentView(R.layout.activity_gplus_login);
 		
 		mUserDataSource = new UserDataSource(this);
+		mGroupDataSource = new GroupDataSource(this);
+		mGroupDataSource.open();
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		mPlusClient = new PlusClient.Builder(this, this, this)
@@ -62,12 +66,15 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 		super.onDestroy();
 		if (mPlusClient != null)
 			mPlusClient.disconnect();
+		if (mGroupDataSource != null)
+			mGroupDataSource.close();
 	}
 	
 	@Override
 	protected void onStart() {
 		super.onStart();
 		mPlusClient.connect();
+		mGroupDataSource.open();
 	}
 	
 	@Override
@@ -75,6 +82,8 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 		super.onStop();
 		if (mPlusClient != null)
 			mPlusClient.disconnect();
+		if (mGroupDataSource != null)
+			mGroupDataSource.close();
 	}
 	
 	@Override
@@ -175,6 +184,38 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 			@Override
 			public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
 				Toast.makeText(getBaseContext(), "Server error. Please try again later.", Toast.LENGTH_LONG).show();
+			}
+		});
+		
+		params = new RequestParams();
+		params.put(UserDataSource.PREF_GOOGLEID, mPlusClient.getCurrentPerson().getId());
+		client.post("http://ezride-weiqing.rhcloud.com/androidgetusergroups.php", params, new AsyncHttpResponseHandler() {
+			@Override
+			public void onSuccess(int statusCode, org.apache.http.Header[] headers, byte[] responseBody) {
+				String response = new String(responseBody);
+				Log.d("GPlusLoginActivity.refreshGroups().response.succeed", response);
+				
+				mGroupDataSource.recreate();
+				int numgroups = Integer.parseInt(response.substring(10, response.indexOf("\n")));
+				int groupidindex = response.indexOf("groupid");
+				for (int i = 0;i < numgroups;i++) {
+					int g_id = Integer.parseInt(response.substring(groupidindex + 8, response.indexOf("\n", groupidindex)));
+					String g_name = response.substring(response.indexOf("name", groupidindex) + 5, response.indexOf("\n", response.indexOf("name", groupidindex)));
+					String g_datecreated = response.substring(response.indexOf("datecreated", groupidindex) + 12, response.indexOf("\n", response.indexOf("datecreated", groupidindex)));
+					groupidindex = (response.indexOf("\n", response.indexOf("datecreated", groupidindex)) + 1);
+					Log.d("GroupsActivity.refreshGroups()", "id=" + g_id + "\nname=" + g_name + "\ndatecreated=" + g_datecreated + "\ngroupidindex=" + groupidindex);
+					
+					if (mGroupDataSource.addGroup(g_id, g_name, g_datecreated) == null) {
+						Toast.makeText(getBaseContext(), "Refresh failed. Please try again.", Toast.LENGTH_LONG).show();
+						break;
+					}
+				}
+			}
+			
+			@Override
+			public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
+				String response = new String(responseBody);
+				Log.d("GPlusLoginActivity.refreshGroups().response.fail", response);
 			}
 		});
 		

@@ -1,6 +1,7 @@
 package com.cs307.ezride.activities;
 
 import com.cs307.ezride.R;
+import com.cs307.ezride.database.GroupDataSource;
 import com.cs307.ezride.database.UserDataSource;
 import com.cs307.ezride.fragments.*;
 import com.google.android.gms.auth.GoogleAuthException;
@@ -47,10 +48,11 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 	private String[] mDrawerItems = null;
 	private CharSequence mDrawerTitle = null;
 	private CharSequence mTitle = null;
-	private int prevPosition = -1;
+	private GroupDataSource mGroupDataSource = null;
 	
 	private TestFragment mTestFragment = null;
 	private MapFragment mMapFragment = null;
+	private CalendarFragment mCalendarFragment = null;
 	private GroupsFragment mGroupsFragment = null;
 	
 	
@@ -61,6 +63,8 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 		
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		mUserDataSource = new UserDataSource(this);
+		mGroupDataSource = new GroupDataSource(this);
+		mGroupDataSource.open();
 		mTitle = mDrawerTitle = getTitle();
 		
 		mPlusClient = new PlusClient.Builder(this, this, this)
@@ -100,10 +104,6 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 		
 		if (savedInstanceState == null)
 			selectItem(0);
-		
-		/*FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-		ft.replace(R.id.activity_main_fragment_placeholder, new TestFragment());
-		ft.commit();*/
 	}
 	
 	@Override
@@ -117,6 +117,8 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 		super.onDestroy();
 		if (mPlusClient != null)
 			mPlusClient.disconnect();
+		if (mGroupDataSource != null)
+			mGroupDataSource.close();
 	}
 	
 	@Override
@@ -147,9 +149,6 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 	
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		boolean isDrawerOpen = mDrawerLayout.isDrawerOpen(mDrawerList);
-		menu.findItem(R.id.action_calendar_view).setVisible(!isDrawerOpen);
-		menu.findItem(R.id.action_groups_view).setVisible(!isDrawerOpen);
 		return super.onPrepareOptionsMenu(menu);
 	}
 	
@@ -159,13 +158,14 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 			return true;
 		
 		switch (item.getItemId()) {
-		case R.id.action_groups_view:
-			GroupsViewButton_onClick();
-			return false;
-		case R.id.action_calendar_view:
-			CalendarViewButton_onClick();
-			return false;
+		case R.id.activity_main_fragment_action_settings:
+			mDrawerLayout.closeDrawer(mDrawerList);
+			return super.onOptionsItemSelected(item);
+		case R.id.activity_main_fragment_action_about:
+			mDrawerLayout.closeDrawer(mDrawerList);
+			return super.onOptionsItemSelected(item);
 		default:
+			mDrawerLayout.closeDrawer(mDrawerList);
 			return super.onOptionsItemSelected(item);
         }
     }
@@ -245,18 +245,6 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 		mPlusClient.connect();
 		finish();
 	}
-
-	private void GroupsViewButton_onClick() {
-        Intent intent = new Intent(this, GroupsActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.right_in, R.anim.left_out);
-	}
-
-	private void CalendarViewButton_onClick() {
-        Intent intent = new Intent(this, CalendarActivity.class);
-        startActivity(intent);
-        overridePendingTransition(R.anim.right_in, R.anim.left_out);
-	}
 	
 	private class DrawerItemClickListener implements ListView.OnItemClickListener {
 		@Override
@@ -284,7 +272,12 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 			//ft.addToBackStack(null);
 			ft.commit();
 		} else if (position == 2) {
-			
+			if (mCalendarFragment == null)
+				mCalendarFragment = new CalendarFragment();
+			ft.replace(R.id.activity_main_fragment_placeholder, mCalendarFragment);
+			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+			//ft.addToBackStack(null);
+			ft.commit();
 		} else if (position == 3) {
 			if (mGroupsFragment == null)
 				mGroupsFragment = new GroupsFragment();
@@ -303,7 +296,6 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 		mDrawerList.setItemChecked(position, true);
 		setTitle(mDrawerItems[position]);
 		mDrawerLayout.closeDrawer(mDrawerList);
-		prevPosition = position;
 	}
 
 }
