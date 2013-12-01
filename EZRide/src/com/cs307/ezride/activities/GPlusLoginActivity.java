@@ -199,13 +199,33 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 				int numgroups = Integer.parseInt(response.substring(10, response.indexOf("\n")));
 				int groupidindex = response.indexOf("groupid");
 				for (int i = 0;i < numgroups;i++) {
-					int g_id = Integer.parseInt(response.substring(groupidindex + 8, response.indexOf("\n", groupidindex)));
-					String g_name = response.substring(response.indexOf("name", groupidindex) + 5, response.indexOf("\n", response.indexOf("name", groupidindex)));
-					String g_datecreated = response.substring(response.indexOf("datecreated", groupidindex) + 12, response.indexOf("\n", response.indexOf("datecreated", groupidindex)));
+					int g_id = -1;
+					String g_name = null, g_datecreated = null, g_description = null;
+					try {
+						g_id = Integer.parseInt(response.substring(groupidindex + 8, response.indexOf("\n", groupidindex)));
+					} catch(NumberFormatException e) {
+						g_id = -1;
+					}
+					try {
+						g_name = response.substring(response.indexOf("name", groupidindex) + 5, response.indexOf("\n", response.indexOf("name", groupidindex)));
+					} catch (Exception e) {
+						g_name = null;
+					}
+					try {
+						g_description = response.substring(response.indexOf("description", groupidindex) + 12, response.indexOf("\n", response.indexOf("description", groupidindex)));
+					} catch (Exception e) {
+						g_description = null;
+					}
+					try {
+						g_datecreated = response.substring(response.indexOf("datecreated", groupidindex) + 12, response.indexOf("\n", response.indexOf("datecreated", groupidindex)));
+					} catch (Exception e) {
+						g_datecreated = null;
+					}
 					groupidindex = (response.indexOf("\n", response.indexOf("datecreated", groupidindex)) + 1);
 					Log.d("GroupsActivity.refreshGroups()", "id=" + g_id + "\nname=" + g_name + "\ndatecreated=" + g_datecreated + "\ngroupidindex=" + groupidindex);
 					
-					if (mGroupDataSource.addGroup(g_id, g_name, g_datecreated) == null) {
+					
+					if (mGroupDataSource.addGroup(g_id, g_name, g_description, g_datecreated) == null) {
 						Toast.makeText(getBaseContext(), "Refresh failed. Please try again.", Toast.LENGTH_LONG).show();
 						break;
 					}

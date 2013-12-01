@@ -12,6 +12,7 @@ public class GroupDataSource {
 	private DBHelper dbHelper;
 	private String[] allColumns = { GroupTable.COLUMN_ID,
 			GroupTable.COLUMN_NAME,
+			GroupTable.COLUMN_DESCRIPTION,
 			GroupTable.COLUMN_DATECREATED };
 	
 	public GroupDataSource(Context context) {
@@ -26,6 +27,10 @@ public class GroupDataSource {
 		dbHelper.close();
 	}
 	
+	public void clear() {
+		
+	}
+	
 	public void recreate() {
 		database.execSQL("DROP TABLE IF EXISTS " + GroupTable.TABLE_NAME);
 		GroupTable.onCreate(database);
@@ -36,14 +41,16 @@ public class GroupDataSource {
 	 *
 	 * @param	id				the id of the group from central database.
 	 * @param	name			the group's actual name.
+	 * @param	description		the group's description.
 	 * @param	datecreated		the group's creation date and time.
 	 * @return					the data of the group bundled into a Group object
 	 */
-	public Group addGroup(int id, String name, String datecreated) {
+	public Group addGroup(int id, String name, String description, String datecreated) {
 		Log.d("GroupDataSource.createGroup", "id=" + id + "\nname=" + name + "\ndatecreated=" + datecreated);
 		ContentValues values = new ContentValues();
 		values.put(GroupTable.COLUMN_ID, id);
 		values.put(GroupTable.COLUMN_NAME, name);
+		values.put(GroupTable.COLUMN_DESCRIPTION, description);
 		values.put(GroupTable.COLUMN_DATECREATED, datecreated);
 		
 		long insertId = database.insert(GroupTable.TABLE_NAME, null, values);
@@ -68,6 +75,7 @@ public class GroupDataSource {
 		ContentValues values = new ContentValues();
 		values.put(GroupTable.COLUMN_ID, group.getId());
 		values.put(GroupTable.COLUMN_NAME, group.getName());
+		values.put(GroupTable.COLUMN_DESCRIPTION, group.getDescription());
 		values.put(GroupTable.COLUMN_DATECREATED, group.getDateCreated());
 		
 		long insertId = database.insert(GroupTable.TABLE_NAME, null, values);
@@ -102,6 +110,7 @@ public class GroupDataSource {
 	public int updateGroup(Group group) {
 		ContentValues values = new ContentValues();
 		values.put(GroupTable.COLUMN_NAME, group.getName());
+		values.put(GroupTable.COLUMN_DESCRIPTION, group.getDescription());
 		values.put(GroupTable.COLUMN_DATECREATED, group.getDateCreated());
 		
 		String whereClause = GroupTable.COLUMN_ID + "=?";
@@ -144,6 +153,7 @@ public class GroupDataSource {
 		Group group = new Group();
 		group.setId(cursor.getInt(cursor.getColumnIndex(GroupTable.COLUMN_ID)));
 		group.setName(cursor.getString(cursor.getColumnIndex(GroupTable.COLUMN_NAME)));
+		group.setDescription(cursor.getString(cursor.getColumnIndex(GroupTable.COLUMN_DESCRIPTION)));
 		group.setDateCreated(cursor.getString(cursor.getColumnIndex(GroupTable.COLUMN_DATECREATED)));
 		return group;
 	}

@@ -23,8 +23,7 @@
     <string name="title_activity_map_fragment">MapFragment</string>
     <string name="activity_main_fragment_drawer_open">Open Drawer</string>
     <string name="activity_main_fragment_drawer_close">Close Drawer</string>
-    
-    
+
     <string-array name="activity_main_fragment_drawerlist_array">
         <item>Test</item>
         <item>Map</item>

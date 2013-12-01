@@ -54,5 +54,9 @@ public class MapFragment extends Fragment {
 	public void onDestroyView() {
 		super.onDestroyView();
 	}
+	
+	public void notifyFragmentOfGroupChange(int groupIndex) {
+		
+	}
 
 }

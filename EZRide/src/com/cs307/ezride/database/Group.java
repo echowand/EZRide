@@ -2,7 +2,7 @@ package com.cs307.ezride.database;
 
 public class Group {
 	private int id;
-	private String name, datecreated;
+	private String name, description, datecreated;
 	
 	public int getId() {
 		return this.id;
@@ -20,6 +20,14 @@ public class Group {
 		this.name = name;
 	}
 	
+	public String getDescription() {
+		return this.description;
+	}
+	
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 	public String getDateCreated() {
 		return this.datecreated;
 	}
@@ -30,6 +38,6 @@ public class Group {
 	
 	@Override
 	public String toString() {
-		return Integer.toString(id) + " " + name + " " + datecreated;
+		return Integer.toString(id) + " " + name + " " + description + " " + datecreated + "\n";
 	}
 }

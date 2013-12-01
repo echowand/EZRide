@@ -28,5 +28,9 @@ public class CalendarFragment extends Fragment {
 		
 		return view;
 	}
+	
+	public void notifyFragmentOfGroupChange(int groupIndex) {
+		
+	}
 
 }

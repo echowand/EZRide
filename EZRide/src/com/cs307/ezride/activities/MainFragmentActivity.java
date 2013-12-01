@@ -1,6 +1,10 @@
 package com.cs307.ezride.activities;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.cs307.ezride.R;
+import com.cs307.ezride.database.Group;
 import com.cs307.ezride.database.GroupDataSource;
 import com.cs307.ezride.database.UserDataSource;
 import com.cs307.ezride.fragments.*;
@@ -14,6 +18,7 @@ import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailed
 import com.google.android.gms.plus.PlusClient;
 import com.google.android.gms.plus.PlusClient.OnAccessRevokedListener;
 
+import android.app.ActionBar;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,8 +42,11 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-public class MainFragmentActivity extends FragmentActivity implements ConnectionCallbacks, OnConnectionFailedListener, OnAccessRevokedListener {
+public class MainFragmentActivity extends FragmentActivity implements ConnectionCallbacks,
+				OnConnectionFailedListener, OnAccessRevokedListener, ActionBar.OnNavigationListener {
 	private static final int REQUEST_CODE_RESOLVE_ERR = 9000;
+	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
+	
 	private PlusClient mPlusClient = null;
 	private SharedPreferences mPrefs = null;
 	private UserDataSource mUserDataSource = null;
@@ -55,6 +63,8 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 	private CalendarFragment mCalendarFragment = null;
 	private GroupsFragment mGroupsFragment = null;
 	
+	private int currentSelectedFragment = -1;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +76,11 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 		mGroupDataSource = new GroupDataSource(this);
 		mGroupDataSource.open();
 		mTitle = mDrawerTitle = getTitle();
+		
+		final ActionBar actionBar = getActionBar();
+		// We actually want to show the title
+		//actionBar.setDisplayShowTitleEnabled(false);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		
 		mPlusClient = new PlusClient.Builder(this, this, this)
 					.setActions("http://schemas.google.com/AddActivity")
@@ -80,8 +95,8 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 		mDrawerList.setAdapter(new ArrayAdapter<String>(this, R.layout.activity_main_fragment_drawer_list_item, mDrawerItems));
 		mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
 		
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-		getActionBar().setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
 		
 		mDrawerToggle = new ActionBarDrawerToggle(
 				this,
@@ -101,6 +116,16 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 			}
 		};
 		mDrawerLayout.setDrawerListener(mDrawerToggle);
+		
+		Group[] groups = mGroupDataSource.getGroups();
+		List<String> groupList = new ArrayList<String>();
+		for (Group group : groups) {
+			groupList.add(group.getName());
+		}
+		String[] groupNames = groupList.toArray(new String[groupList.size()]);
+		actionBar.setListNavigationCallbacks(new ArrayAdapter<String>(actionBar.getThemedContext(),
+								android.R.layout.simple_list_item_1,
+								android.R.id.text1, groupNames), this);
 		
 		if (savedInstanceState == null)
 			selectItem(0);
@@ -132,6 +157,17 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 		super.onStop();
 		if (mPlusClient != null)
 			mPlusClient.disconnect();
+	}
+	
+	@Override
+	public void onSaveInstanceState(Bundle outState) {
+		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar().getSelectedNavigationIndex());
+	}
+	
+	@Override
+	public void onRestoreInstanceState(Bundle savedInstanceState) {
+		if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM))
+			getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
 	}
 	
 	@Override
@@ -169,6 +205,33 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 			return super.onOptionsItemSelected(item);
         }
     }
+	
+	@Override
+	public boolean onNavigationItemSelected(int position, long id) {
+		Log.d(MainFragmentActivity.class.getName() + ".onNavigationItemSelected", "position = " + Integer.toString(position));
+		
+		if (currentSelectedFragment == 0) {
+			if (mTestFragment != null) {
+				mTestFragment.notifyFragmentOfGroupChange(position);
+			}
+		} else if (currentSelectedFragment == 1) {
+			if (mMapFragment != null) {
+				mMapFragment.notifyFragmentOfGroupChange(position);
+			}
+		} else if (currentSelectedFragment == 2) {
+			if (mCalendarFragment != null) {
+				mCalendarFragment.notifyFragmentOfGroupChange(position);
+			}
+		} else if (currentSelectedFragment == 3) {
+			if (mGroupsFragment != null) {
+				mGroupsFragment.notifyFragmentOfGroupChange(position);
+			}
+		} else {
+			
+		}
+		
+		return true;
+	}
 	
 	@Override
     protected void onActivityResult(int requestCode, int responseCode, Intent intent) {
@@ -255,6 +318,7 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 	
 	private void selectItem(int position) {
 		Log.d(MainFragmentActivity.class.getName() + ".selectItem()", "position = " + Integer.toString(position));
+		currentSelectedFragment = position;
 		
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 		if (position == 0) {
@@ -285,10 +349,6 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 			ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
 			//ft.addToBackStack(null);
 			ft.commit();
-		} else if (position == 4) {
-			
-		} else if (position == 5) {
-			
 		} else {
 			
 		}
