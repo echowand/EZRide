@@ -65,6 +65,33 @@ public class MessageDataSource {
 		return m;
 	}
 	
+	public Message[] getMessages(int groupid) {
+		Cursor cursor = null;
+		try {
+			String selection = "groupid = ?";
+			String[] selectionArgs = new String[1];
+			selectionArgs[0] = Integer.toString(groupid);
+			cursor = database.query(MessageTable.TABLE_NAME, null, selection, selectionArgs, null, null, null);
+		} catch (Exception e) {
+			Log.e("EZRIDE_DATABASE_ERROR", "Retrieving messages failed.");
+			return null;
+		}
+		cursor.moveToFirst();
+		if (cursor.getCount() == 0)
+			return null;
+		else {
+			Message[] messages = new Message[cursor.getCount()];
+			
+			for (int i = 0;i < cursor.getCount();i++){
+				messages[i] = CursorToMessage(cursor);
+				if (!cursor.moveToNext())
+					break;
+			}
+			
+			return messages;
+		}
+	}
+	
 	public static Message CursorToMessage(Cursor cursor) {
 		if ((cursor == null)||(cursor.isAfterLast()))
 			return null;

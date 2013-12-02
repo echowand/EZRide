@@ -67,4 +67,14 @@
         android:text="@string/cancel"
         android:textSize="30sp" />
 
+    <Button
+        android:id="@+id/fragment_groups_button_exit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/fragment_groups_button_cancel"
+        android:layout_below="@+id/fragment_groups_button_cancel"
+        android:layout_marginTop="13dp"
+        android:text="@string/leave"
+        android:textSize="30sp" />
+
 </RelativeLayout>

@@ -57,10 +57,22 @@ public class GroupDataSource {
 	public Group addGroup(int id, String name, String description, String datecreated) {
 		Log.d("GroupDataSource.createGroup", "id=" + id + "\nname=" + name + "\ndatecreated=" + datecreated);
 		ContentValues values = new ContentValues();
-		values.put(GroupTable.COLUMN_ID, id);
-		values.put(GroupTable.COLUMN_NAME, name);
-		values.put(GroupTable.COLUMN_DESCRIPTION, description);
-		values.put(GroupTable.COLUMN_DATECREATED, datecreated);
+		if (id < 0)
+			return null;
+		else
+			values.put(GroupTable.COLUMN_ID, id);
+		if (name == null)
+			values.putNull(GroupTable.COLUMN_NAME);
+		else
+			values.put(GroupTable.COLUMN_NAME, name);
+		if (description == null)
+			values.putNull(GroupTable.COLUMN_DESCRIPTION);
+		else
+			values.put(GroupTable.COLUMN_DESCRIPTION, description);
+		if (datecreated == null)
+			values.putNull(GroupTable.COLUMN_DATECREATED);
+		else
+			values.put(GroupTable.COLUMN_DATECREATED, datecreated);
 		
 		long insertId = database.insert(GroupTable.TABLE_NAME, null, values);
 		Cursor cursor = database.query(GroupTable.TABLE_NAME, allColumns, GroupTable.COLUMN_ID + " = " + insertId, null, null, null, null);
@@ -162,7 +174,7 @@ public class GroupDataSource {
 		try {
 			cursor = database.query(GroupTable.TABLE_NAME, null, null, null, null, null, null);
 		} catch (NullPointerException e) {
-			Log.e("EZRIDE_DATABASE_ERROR", "Retrieving user failed.");
+			Log.e("EZRIDE_DATABASE_ERROR", "Retrieving groups failed.");
 			return null;
 		}
 		cursor.moveToFirst();

@@ -57,6 +57,7 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 	private CharSequence mTitle = null;
 	private GroupDataSource mGroupDataSource = null;
 	private EventDataSource mEventDataSource = null;
+	private MessageDataSource mMessageDataSource = null;
 	
 	private TestFragment mTestFragment = null;
 	private MapFragment mMapFragment = null;
@@ -82,6 +83,8 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 		mEventDataSource = new EventDataSource(this);
 		mEventDataSource.open();
 		mEventDataSource.recreate();
+		mMessageDataSource = new MessageDataSource(this);
+		mMessageDataSource.open();
 		mTitle = mDrawerTitle = getTitle();
 		
 		final ActionBar actionBar = getActionBar();
@@ -220,6 +223,9 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 			mGroupDataSource.close();
 		if (mEventDataSource != null)
 			mEventDataSource.close();
+		if (mMessageDataSource != null) {
+			mMessageDataSource.close();
+		}
 	}
 	
 	@Override
