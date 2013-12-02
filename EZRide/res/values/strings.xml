@@ -7,7 +7,6 @@
     <string name="action_about">About</string>
     <string name="action_join">Join</string>
     <string name="action_create">Create</string>
-    <string name="action_add_events">Add Events</string>
     <string name="welcome">Welcome To EZRide!</string>
     <string name="welcome_text">In order to make things more simple for you, we decided to use Google Plus as our login system. It allows us to streamline things by utilizing something you have already created, your calendar. It is also cross-platform and anything you do here is reflected on our web app, which can be found at http://ezride-weiqing.rhcloud.com.</string>
     <string name="login">Login</string>
