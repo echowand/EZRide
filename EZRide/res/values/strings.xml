@@ -10,6 +10,7 @@
     <string name="login">Login</string>
     <string name="logout">Logout</string>
     <string name="bio">About Me</string>
+    <string name="website">Website</string>
     <string name="title_activity_gplus_login">Sign In&#8230;</string>
     <string name="title_activity_main_fragment">MainFragmentActivity</string>
     <string name="profile_action_save">Save</string>
@@ -23,14 +24,19 @@
     <string name="title_activity_map_fragment">MapFragment</string>
     <string name="activity_main_fragment_drawer_open">Open Drawer</string>
     <string name="activity_main_fragment_drawer_close">Close Drawer</string>
+    <string name="name_label">Name:</string>
+    <string name="description_label">Description:</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
 
     <string-array name="activity_main_fragment_drawerlist_array">
         <item>Test</item>
         <item>Map</item>
         <item>Calendar</item>
         <item>Groups</item>
-        <item>Settings</item>
-        <item>About</item>
     </string-array>
+
+    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_about">AboutActivity</string>
 
 </resources>

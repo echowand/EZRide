@@ -17,8 +17,9 @@ public class TestFragment extends Fragment {
 		return view;
 	}
 	
-	public void notifyFragmentOfGroupChange(int groupIndex) {
+	public boolean notifyFragmentOfGroupChange(int groupIndex) {
 		Log.d(TestFragment.class.getName(), "Fragment notified");
+		return true;
 	}
 
 }

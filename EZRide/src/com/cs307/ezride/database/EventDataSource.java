@@ -10,8 +10,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 public class EventDataSource {
-	private SQLiteDatabase database;
-	private DBHelper dbHelper;
+	private SQLiteDatabase database = null;
+	private DBHelper dbHelper = null;
 	private String[] allColumns = { EventTable.COLUMN_ID,
 			EventTable.COLUMN_GOOGLEID,
 			EventTable.COLUMN_TITLE,
@@ -19,21 +19,33 @@ public class EventDataSource {
 			EventTable.COLUMN_START,
 			EventTable.COLUMN_END };
 	
+	private Context context = null;
+	
 	public EventDataSource(Context context) {
 		dbHelper = new DBHelper(context);
+		this.context = context;
 	}
 	
 	public void open() throws SQLException {
+		if (dbHelper == null)
+			dbHelper = new DBHelper(context);
 		database = dbHelper.getWritableDatabase();
 	}
 	
 	public void close() {
-		dbHelper.close();
+		if (dbHelper != null) {
+			dbHelper.close();
+			dbHelper = null;
+		}
+	}
+	
+	public void clear() {
+		database.execSQL("DROP TABLE IF EXISTS " + EventTable.TABLE_NAME);
 	}
 	
 	public void recreate() {
 		database.execSQL("DROP TABLE IF EXISTS " + EventTable.TABLE_NAME);
-		GroupTable.onCreate(database);
+		EventTable.onCreate(database);
 		Log.d(EventDataSource.class.getName(), EventTable.TABLE_NAME + " table recreated.");
 	}
 	
@@ -57,8 +69,8 @@ public class EventDataSource {
 		values.put(EventTable.COLUMN_START, start);
 		values.put(EventTable.COLUMN_END, end);
 		
-		long insertId = database.insert(EventTable.TABLE_NAME, null, values);
-		Cursor cursor = database.query(EventTable.TABLE_NAME, allColumns, EventTable.COLUMN_ID + " = " + insertId, null, null, null, null);
+		database.insert(EventTable.TABLE_NAME, null, values);
+		Cursor cursor = database.query(EventTable.TABLE_NAME, allColumns, EventTable.COLUMN_ID + " = " + id, null, null, null, null);
 		cursor.moveToFirst();
 		
 		Event event = CursorToEvent(cursor);

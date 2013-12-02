@@ -20,7 +20,6 @@ import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.IntentSender.SendIntentException;
@@ -38,16 +37,20 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 	private SharedPreferences mPrefs = null;
 	private UserDataSource mUserDataSource = null;
 	private GroupDataSource mGroupDataSource = null;
+	private Object mLock = null;
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_gplus_login);
+		Log.d("GPlusLoginActivity", "onCreate");
 		
+		mLock = new Object();
 		mUserDataSource = new UserDataSource(this);
 		mGroupDataSource = new GroupDataSource(this);
 		mGroupDataSource.open();
+		mGroupDataSource.recreate();
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		
 		mPlusClient = new PlusClient.Builder(this, this, this)
@@ -62,8 +65,16 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 	}
 	
 	@Override
-	protected void onDestroy() {
-		super.onDestroy();
+	protected void onStart() {
+		super.onStart();
+		mPlusClient.connect();
+		if (mGroupDataSource == null)
+			mGroupDataSource.open();
+	}
+	
+	@Override
+	protected void onStop() {
+		super.onStop();
 		if (mPlusClient != null)
 			mPlusClient.disconnect();
 		if (mGroupDataSource != null)
@@ -71,15 +82,8 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 	}
 	
 	@Override
-	protected void onStart() {
-		super.onStart();
-		mPlusClient.connect();
-		mGroupDataSource.open();
-	}
-	
-	@Override
-	protected void onStop() {
-		super.onStop();
+	protected void onDestroy() {
+		super.onDestroy();
 		if (mPlusClient != null)
 			mPlusClient.disconnect();
 		if (mGroupDataSource != null)
@@ -121,21 +125,31 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 		final String accountName = mPlusClient.getAccountName();
         Toast.makeText(this, accountName + " is connected.", Toast.LENGTH_LONG).show();
         
-        final Context context = this;
+        final Activity activity = this;
         AsyncTask task = new AsyncTask() {
 			@Override
 			protected Object doInBackground(Object... params) {
 				Bundle appActivities = new Bundle();
 				appActivities.putString(GoogleAuthUtil.KEY_REQUEST_VISIBLE_ACTIVITIES, "http://schemas.google.com/AddActivity");
 				String scope = "oauth2:" + Scopes.PLUS_LOGIN + " https://www.googleapis.com/auth/calendar";
-				Log.d(MainActivity.class.getName(), scope);
+				Log.d(GPlusLoginActivity.class.getName(), scope);
 				try {
-					String token = GoogleAuthUtil.getToken(context, accountName, scope, appActivities);
-					Log.d(MainActivity.class.getName(), token);
+					String token = GoogleAuthUtil.getToken(activity, accountName, scope, appActivities);
+					Log.d(GPlusLoginActivity.class.getName(), token);
 					Editor prefEditor = mPrefs.edit();
 					prefEditor.putString("access_token", token);
 					prefEditor.putString("email", accountName);
 					prefEditor.commit();
+					loginAndGetGroups();
+					
+					synchronized (mLock) {
+						mLock.wait();
+					}
+					
+					Intent intent = new Intent(activity, MainFragmentActivity.class);
+					activity.startActivity(intent);
+					activity.overridePendingTransition(R.anim.right_in, R.anim.left_out);
+					activity.finish();
 				} catch (UserRecoverableAuthException e) {
 					startActivityForResult(e.getIntent(), REQUEST_CODE_RESOLVE_ERR);
 				} catch (GoogleAuthException e) {
@@ -147,8 +161,40 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 			}
         };
         task.execute((Void)null);
-        
-        RequestParams params = new RequestParams();
+	}
+
+	@Override
+	public void onDisconnected() {
+		Log.d(GPlusLoginActivity.class.getName(), "disconnected");
+		Toast.makeText(this, "You have logged out of EZRide.", Toast.LENGTH_LONG).show();
+	}
+
+	@Override
+	public void onClick(View view) {
+		switch (view.getId()) {
+		case R.id.gplus_sign_in_button:
+			Log.d(GPlusLoginActivity.class.getName(), "tapped sign in");
+			if (!mPlusClient.isConnected()) {
+	            if (mConnectionResult == null) {
+	                mConnectionProgressDialog.show();
+	            } else {
+	                try {
+	                    mConnectionResult.startResolutionForResult(this, REQUEST_CODE_RESOLVE_ERR);
+	                } catch (SendIntentException e) {
+	                    // Try connecting again.
+	                    mConnectionResult = null;
+	                    mPlusClient.connect();
+	                }
+	            }
+	        }
+			break;
+		default:
+			break;
+		}
+	}
+	
+	private void loginAndGetGroups() {
+		RequestParams params = new RequestParams();
         params.put("google_id", mPlusClient.getCurrentPerson().getId());
         params.put("name", mPlusClient.getCurrentPerson().getDisplayName());
         params.put("avatarURL", mPlusClient.getCurrentPerson().getImage().getUrl());
@@ -177,7 +223,7 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 				String avatarUrl = response.substring(response.indexOf("avatarUrl") + 10, response.indexOf("\n", response.indexOf("avatarUrl")));
 				
 				if (mUserDataSource.addUser(id, google_id, name, email, phone, address, profile, avatarUrl) == null) {
-					Log.w(MainActivity.class.getName() + ".onConnected", "Failed to add user to data store.");
+					Log.w(GPlusLoginActivity.class.getName() + ".onConnected", "Failed to add user to data store.");
 				}
 			}
 			
@@ -222,13 +268,19 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 						g_datecreated = null;
 					}
 					groupidindex = (response.indexOf("\n", response.indexOf("datecreated", groupidindex)) + 1);
-					Log.d("GroupsActivity.refreshGroups()", "id=" + g_id + "\nname=" + g_name + "\ndatecreated=" + g_datecreated + "\ngroupidindex=" + groupidindex);
+					Log.d("GPlusLoginActivity.refreshGroups()", "id=" + g_id + "\nname=" + g_name + "\ndatecreated=" + g_datecreated + "\ngroupidindex=" + groupidindex);
 					
 					
 					if (mGroupDataSource.addGroup(g_id, g_name, g_description, g_datecreated) == null) {
 						Toast.makeText(getBaseContext(), "Refresh failed. Please try again.", Toast.LENGTH_LONG).show();
+						synchronized (mLock) {
+							mLock.notify();
+						}
 						break;
 					}
+				}
+				synchronized (mLock) {
+					mLock.notify();
 				}
 			}
 			
@@ -236,42 +288,11 @@ public class GPlusLoginActivity extends Activity implements OnClickListener, Con
 			public void onFailure(int statusCode, org.apache.http.Header[] headers, byte[] responseBody, Throwable error) {
 				String response = new String(responseBody);
 				Log.d("GPlusLoginActivity.refreshGroups().response.fail", response);
+				synchronized (mLock) {
+					mLock.notify();
+				}
 			}
 		});
-		
-		Intent intent = new Intent(this, MainFragmentActivity.class);
-		startActivity(intent);
-		finish();
-	}
-
-	@Override
-	public void onDisconnected() {
-		Log.d(MainActivity.class.getName(), "disconnected");
-		Toast.makeText(this, "You have logged out of EZRide.", Toast.LENGTH_LONG).show();
-	}
-
-	@Override
-	public void onClick(View view) {
-		switch (view.getId()) {
-		case R.id.gplus_sign_in_button:
-			Log.d(MainActivity.class.getName(), "tapped sign in");
-			if (!mPlusClient.isConnected()) {
-	            if (mConnectionResult == null) {
-	                mConnectionProgressDialog.show();
-	            } else {
-	                try {
-	                    mConnectionResult.startResolutionForResult(this, REQUEST_CODE_RESOLVE_ERR);
-	                } catch (SendIntentException e) {
-	                    // Try connecting again.
-	                    mConnectionResult = null;
-	                    mPlusClient.connect();
-	                }
-	            }
-	        }
-			break;
-		default:
-			break;
-		}
 	}
 
 }

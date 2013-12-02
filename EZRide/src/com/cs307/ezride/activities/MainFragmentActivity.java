@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.cs307.ezride.R;
-import com.cs307.ezride.database.Group;
-import com.cs307.ezride.database.GroupDataSource;
-import com.cs307.ezride.database.UserDataSource;
+import com.cs307.ezride.database.*;
 import com.cs307.ezride.fragments.*;
 import com.google.android.gms.auth.GoogleAuthException;
 import com.google.android.gms.auth.GoogleAuthUtil;
@@ -46,6 +44,7 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 				OnConnectionFailedListener, OnAccessRevokedListener, ActionBar.OnNavigationListener {
 	private static final int REQUEST_CODE_RESOLVE_ERR = 9000;
 	private static final String STATE_SELECTED_NAVIGATION_ITEM = "selected_navigation_item";
+	private static final String STATE_SELECTED_DRAWER_ITEM = "selected_drawer_item";
 	
 	private PlusClient mPlusClient = null;
 	private SharedPreferences mPrefs = null;
@@ -57,6 +56,7 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 	private CharSequence mDrawerTitle = null;
 	private CharSequence mTitle = null;
 	private GroupDataSource mGroupDataSource = null;
+	private EventDataSource mEventDataSource = null;
 	
 	private TestFragment mTestFragment = null;
 	private MapFragment mMapFragment = null;
@@ -65,20 +65,28 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 	
 	private int currentSelectedFragment = -1;
 	
+	private String[] groupNames = null;
+	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main_fragment);
 		
+		Log.d("MainFragmentActivity", "onCreate");
+		
 		mPrefs = PreferenceManager.getDefaultSharedPreferences(this);
 		mUserDataSource = new UserDataSource(this);
 		mGroupDataSource = new GroupDataSource(this);
 		mGroupDataSource.open();
+		mEventDataSource = new EventDataSource(this);
+		mEventDataSource.open();
+		mEventDataSource.recreate();
 		mTitle = mDrawerTitle = getTitle();
 		
 		final ActionBar actionBar = getActionBar();
-		// We actually want to show the title
+		// We actually want to show the title.
+		// Helps guide the user through navigation a bit better.
 		//actionBar.setDisplayShowTitleEnabled(false);
 		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 		
@@ -122,45 +130,101 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 		for (Group group : groups) {
 			groupList.add(group.getName());
 		}
-		String[] groupNames = groupList.toArray(new String[groupList.size()]);
+		groupNames = groupList.toArray(new String[groupList.size()]);
 		actionBar.setListNavigationCallbacks(new ArrayAdapter<String>(actionBar.getThemedContext(),
 								android.R.layout.simple_list_item_1,
 								android.R.id.text1, groupNames), this);
 		
 		if (savedInstanceState == null)
+			selectItem(3);
+		else if (savedInstanceState.containsKey(STATE_SELECTED_DRAWER_ITEM))
+			selectItem(savedInstanceState.getInt(STATE_SELECTED_DRAWER_ITEM));
+		else
 			selectItem(0);
 	}
 	
 	@Override
 	protected void onPostCreate(Bundle savedInstanceState) {
 		super.onPostCreate(savedInstanceState);
+		Log.d("MainFragmentActivity", "onPostCreate");
 		mDrawerToggle.syncState();
-	}
-	
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-		if (mPlusClient != null)
-			mPlusClient.disconnect();
-		if (mGroupDataSource != null)
-			mGroupDataSource.close();
 	}
 	
 	@Override
 	protected void onStart() {
 		super.onStart();
-		mPlusClient.connect();
+		Log.d("MainFragmentActivity", "onStart");
+		if (mPlusClient != null) {
+			if (!mPlusClient.isConnected()) {
+				mPlusClient.connect();
+			}
+		} else {
+			mPlusClient = new PlusClient.Builder(this, this, this)
+						.setActions("http://schemas.google.com/AddActivity")
+						.setScopes(Scopes.PLUS_LOGIN, "https://www.googleapis.com/auth/calendar")
+						.build();
+			mPlusClient.connect();
+		}
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.d("MainFragmentActivity", "onResume");
+		if (mPlusClient != null) {
+			if (!mPlusClient.isConnected()) {
+				mPlusClient.connect();
+			}
+		} else {
+			mPlusClient = new PlusClient.Builder(this, this, this)
+						.setActions("http://schemas.google.com/AddActivity")
+						.setScopes(Scopes.PLUS_LOGIN, "https://www.googleapis.com/auth/calendar")
+						.build();
+			mPlusClient.connect();
+		}
+	}
+	
+	@Override
+	protected void onPause() {
+		super.onPause();
+		Log.d("MainFragmentActivity", "onPause");
+		if (mPlusClient != null) {
+			if (mPlusClient.isConnected()) {
+				mPlusClient.disconnect();
+			}
+		}
 	}
 	
 	@Override
 	protected void onStop() {
 		super.onStop();
-		if (mPlusClient != null)
-			mPlusClient.disconnect();
+		Log.d("MainFragmentActivity", "onStop");
+		if (mPlusClient != null) {
+			if (mPlusClient.isConnected()) {
+				mPlusClient.disconnect();
+			}
+		}
+	}
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		Log.d("MainFragmentActivity", "onDestroy");
+		if (mPlusClient != null) {
+			if (mPlusClient.isConnected()) {
+				mPlusClient.disconnect();
+				mPlusClient = null;
+			}
+		}
+		if (mGroupDataSource != null)
+			mGroupDataSource.close();
+		if (mEventDataSource != null)
+			mEventDataSource.close();
 	}
 	
 	@Override
 	public void onSaveInstanceState(Bundle outState) {
+		outState.putInt(STATE_SELECTED_DRAWER_ITEM, currentSelectedFragment);
 		outState.putInt(STATE_SELECTED_NAVIGATION_ITEM, getActionBar().getSelectedNavigationIndex());
 	}
 	
@@ -168,6 +232,8 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 	public void onRestoreInstanceState(Bundle savedInstanceState) {
 		if (savedInstanceState.containsKey(STATE_SELECTED_NAVIGATION_ITEM))
 			getActionBar().setSelectedNavigationItem(savedInstanceState.getInt(STATE_SELECTED_NAVIGATION_ITEM));
+		if (savedInstanceState.containsKey(STATE_SELECTED_DRAWER_ITEM))
+			selectItem(savedInstanceState.getInt(STATE_SELECTED_DRAWER_ITEM));
 	}
 	
 	@Override
@@ -193,12 +259,19 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 		if (mDrawerToggle.onOptionsItemSelected(item))
 			return true;
 		
+		Intent intent = null;
 		switch (item.getItemId()) {
 		case R.id.activity_main_fragment_action_settings:
 			mDrawerLayout.closeDrawer(mDrawerList);
+			intent = new Intent(this, SettingsActivity.class);
+			startActivity(intent);
+			overridePendingTransition(R.anim.right_in, R.anim.left_out);
 			return super.onOptionsItemSelected(item);
 		case R.id.activity_main_fragment_action_about:
 			mDrawerLayout.closeDrawer(mDrawerList);
+			intent = new Intent(this, AboutActivity.class);
+			startActivity(intent);
+			overridePendingTransition(R.anim.right_in, R.anim.left_out);
 			return super.onOptionsItemSelected(item);
 		default:
 			mDrawerLayout.closeDrawer(mDrawerList);
@@ -208,7 +281,7 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 	
 	@Override
 	public boolean onNavigationItemSelected(int position, long id) {
-		Log.d(MainFragmentActivity.class.getName() + ".onNavigationItemSelected", "position = " + Integer.toString(position));
+		Log.d(MainFragmentActivity.class.getName() + ".onNavigationItemSelected", "positionM = " + Integer.toString(position));
 		
 		if (currentSelectedFragment == 0) {
 			if (mTestFragment != null) {
@@ -227,7 +300,7 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 				mGroupsFragment.notifyFragmentOfGroupChange(position);
 			}
 		} else {
-			
+			Toast.makeText(this, "Wat. This shouldn't have happened.", Toast.LENGTH_SHORT).show();
 		}
 		
 		return true;
@@ -299,6 +372,8 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 			mPlusClient.clearDefaultAccount();
 			mPlusClient.revokeAccessAndDisconnect(this);
 			mUserDataSource.deleteUser();
+			mGroupDataSource.clear();
+			mEventDataSource.clear();
 			Toast.makeText(this, "You have logged out of EZRide.", Toast.LENGTH_LONG).show();
 		}
 	}
@@ -317,7 +392,7 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 	}
 	
 	private void selectItem(int position) {
-		Log.d(MainFragmentActivity.class.getName() + ".selectItem()", "position = " + Integer.toString(position));
+		Log.d(MainFragmentActivity.class.getName() + ".selectItem()", "positionD = " + Integer.toString(position));
 		currentSelectedFragment = position;
 		
 		FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -350,12 +425,12 @@ public class MainFragmentActivity extends FragmentActivity implements Connection
 			//ft.addToBackStack(null);
 			ft.commit();
 		} else {
-			
+			Toast.makeText(this, "Wat. This shouldn't have happened.", Toast.LENGTH_SHORT).show();
 		}
 		
 		mDrawerList.setItemChecked(position, true);
 		setTitle(mDrawerItems[position]);
 		mDrawerLayout.closeDrawer(mDrawerList);
 	}
-
+	
 }

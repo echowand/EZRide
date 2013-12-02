@@ -8,32 +8,41 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 public class GroupDataSource {
-	private SQLiteDatabase database;
-	private DBHelper dbHelper;
+	private SQLiteDatabase database = null;
+	private DBHelper dbHelper = null;
 	private String[] allColumns = { GroupTable.COLUMN_ID,
 			GroupTable.COLUMN_NAME,
 			GroupTable.COLUMN_DESCRIPTION,
 			GroupTable.COLUMN_DATECREATED };
 	
+	private Context context = null;
+	
 	public GroupDataSource(Context context) {
 		dbHelper = new DBHelper(context);
+		this.context = context;
 	}
 	
 	public void open() throws SQLException {
+		if (dbHelper == null)
+			dbHelper = new DBHelper(context);
 		database = dbHelper.getWritableDatabase();
 	}
 	
 	public void close() {
-		dbHelper.close();
+		if (dbHelper != null) {
+			dbHelper.close();
+			dbHelper = null;
+		}
 	}
 	
 	public void clear() {
-		
+		database.execSQL("DROP TABLE IF EXISTS " + GroupTable.TABLE_NAME);
 	}
 	
 	public void recreate() {
 		database.execSQL("DROP TABLE IF EXISTS " + GroupTable.TABLE_NAME);
 		GroupTable.onCreate(database);
+		Log.d(GroupDataSource.class.getName(), GroupTable.TABLE_NAME + " table recreated.");
 	}
 	
 	/**
@@ -119,6 +128,31 @@ public class GroupDataSource {
 	}
 	
 	/**
+	 * Gets a group from the database. 
+	 *
+	 * @param	position	a value corresponding to the position of the group you'd like to return in the database.
+	 * @return      		the group as a Group object, or null if an error.
+	 */
+	public Group getGroup(int position) {
+		Cursor cursor = null;
+		
+		try {
+			cursor = database.query(GroupTable.TABLE_NAME, null, null, null, null, null, null);
+		} catch (Exception e) {
+			Log.e("EZRIDE_DATABASE_ERROR", "Retrieving user failed.");
+			e.printStackTrace();
+			return null;
+		}
+		
+		if (cursor != null) {
+			cursor.moveToPosition(position);
+			return CursorToGroup(cursor);
+		}
+		
+		return null;
+	}
+	
+	/**
 	 * Gets the user's groups from the database. 
 	 *
 	 * @return      the User's groups as an array of Group objects.
@@ -147,7 +181,7 @@ public class GroupDataSource {
 		}
 	}
 	
-	private Group CursorToGroup(Cursor cursor) {
+	private static Group CursorToGroup(Cursor cursor) {
 		if ((cursor == null)||(cursor.isAfterLast()))
 			return null;
 		Group group = new Group();

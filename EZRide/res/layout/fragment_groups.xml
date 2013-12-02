@@ -1,14 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragment_groups"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-    <ListView
-        android:id="@+id/fragment_groups_listview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+    <TextView
+        android:id="@+id/fragment_groups_name_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/fragment_groups_name_field"
+        android:layout_marginRight="10dp"
+        android:layout_toLeftOf="@+id/fragment_groups_name_field"
+        android:text="@string/name_label"
+        android:textSize="30sp" />
 
-</uk.co.senab.actionbarpulltorefresh.library.PullToRefreshLayout>
+    <EditText
+        android:id="@+id/fragment_groups_name_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="26dp"
+        android:layout_marginTop="47dp"
+        android:ems="10"
+        android:inputType="textNoSuggestions" >
+
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/fragment_groups_description_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/fragment_groups_name_label"
+        android:layout_below="@+id/fragment_groups_name_label"
+        android:layout_marginTop="49dp"
+        android:text="@string/description_label"
+        android:textSize="30sp" />
+
+    <EditText
+        android:id="@+id/fragment_groups_description_field"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/fragment_groups_description_label"
+        android:layout_alignRight="@+id/fragment_groups_description_label"
+        android:layout_below="@+id/fragment_groups_description_label"
+        android:layout_marginTop="28dp"
+        android:ems="10"
+        android:inputType="textMultiLine" />
+
+    <Button
+        android:id="@+id/fragment_groups_button_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/fragment_groups_name_field"
+        android:layout_alignTop="@+id/fragment_groups_description_label"
+        android:text="@string/save"
+        android:textSize="30sp" />
+
+    <Button
+        android:id="@+id/fragment_groups_button_cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/fragment_groups_button_save"
+        android:layout_alignTop="@+id/fragment_groups_description_field"
+        android:text="@string/cancel"
+        android:textSize="30sp" />
+
+</RelativeLayout>
