@@ -322,6 +322,7 @@ containing a value of this type.
         public static final int fragment_calendar_calendar=0x7f050012;
         public static final int fragment_groups=0x7f05001e;
         public static final int fragment_groups_action_add=0x7f050027;
+        public static final int fragment_groups_action_add_events=0x7f050028;
         public static final int fragment_groups_action_join=0x7f050026;
         public static final int fragment_groups_button_cancel=0x7f050018;
         public static final int fragment_groups_button_exit=0x7f050019;
@@ -378,11 +379,12 @@ containing a value of this type.
     }
     public static final class string {
         public static final int action_about=0x7f080020;
+        public static final int action_add_events=0x7f080023;
         public static final int action_create=0x7f080022;
         public static final int action_join=0x7f080021;
         public static final int action_settings=0x7f08001f;
-        public static final int activity_main_fragment_drawer_close=0x7f080035;
-        public static final int activity_main_fragment_drawer_open=0x7f080034;
+        public static final int activity_main_fragment_drawer_close=0x7f080036;
+        public static final int activity_main_fragment_drawer_open=0x7f080035;
         public static final int app_name=0x7f08001e;
         /**   Title for notification shown when GooglePlayServices needs to be
         enabled for a application to work. [CHAR LIMIT=70] 
@@ -407,8 +409,8 @@ containing a value of this type.
         [CHAR LIMIT=70] 
          */
         public static final int auth_client_using_bad_version_title=0x7f080017;
-        public static final int bio=0x7f080027;
-        public static final int cancel=0x7f080039;
+        public static final int bio=0x7f080028;
+        public static final int cancel=0x7f08003a;
         /**  Button in confirmation dialog to enable Google Play services.  Clicking it
         will direct user to application settings of Google Play services where they
         can enable it [CHAR LIMIT=40] 
@@ -480,32 +482,32 @@ containing a value of this type.
         /**  Long form sign-in button text [CHAR LIMIT=30] 
          */
         public static final int common_signin_button_text_long=0x7f080016;
-        public static final int description_label=0x7f080037;
-        public static final int groups_action_add=0x7f08002c;
-        public static final int groups_action_join=0x7f08002d;
-        public static final int groups_action_refresh=0x7f08002e;
-        public static final int groups_popup_add_button_add=0x7f080030;
-        public static final int groups_popup_add_button_cancel=0x7f080032;
-        public static final int groups_popup_add_button_clear=0x7f080031;
-        public static final int groups_popup_add_name=0x7f08002f;
+        public static final int description_label=0x7f080038;
+        public static final int groups_action_add=0x7f08002d;
+        public static final int groups_action_join=0x7f08002e;
+        public static final int groups_action_refresh=0x7f08002f;
+        public static final int groups_popup_add_button_add=0x7f080031;
+        public static final int groups_popup_add_button_cancel=0x7f080033;
+        public static final int groups_popup_add_button_clear=0x7f080032;
+        public static final int groups_popup_add_name=0x7f080030;
         public static final int hello_world=0x7f08001d;
-        public static final int leave=0x7f08003a;
-        public static final int login=0x7f080025;
-        public static final int logout=0x7f080026;
-        public static final int name_label=0x7f080036;
-        public static final int profile_action_save=0x7f08002b;
+        public static final int leave=0x7f08003b;
+        public static final int login=0x7f080026;
+        public static final int logout=0x7f080027;
+        public static final int name_label=0x7f080037;
+        public static final int profile_action_save=0x7f08002c;
         public static final int pull_to_refresh_pull_label=0x7f080000;
         public static final int pull_to_refresh_refreshing_label=0x7f080002;
         public static final int pull_to_refresh_release_label=0x7f080001;
-        public static final int save=0x7f080038;
-        public static final int title_activity_about=0x7f08003c;
-        public static final int title_activity_gplus_login=0x7f080029;
-        public static final int title_activity_main_fragment=0x7f08002a;
-        public static final int title_activity_map_fragment=0x7f080033;
-        public static final int title_activity_settings=0x7f08003b;
-        public static final int website=0x7f080028;
-        public static final int welcome=0x7f080023;
-        public static final int welcome_text=0x7f080024;
+        public static final int save=0x7f080039;
+        public static final int title_activity_about=0x7f08003d;
+        public static final int title_activity_gplus_login=0x7f08002a;
+        public static final int title_activity_main_fragment=0x7f08002b;
+        public static final int title_activity_map_fragment=0x7f080034;
+        public static final int title_activity_settings=0x7f08003c;
+        public static final int website=0x7f080029;
+        public static final int welcome=0x7f080024;
+        public static final int welcome_text=0x7f080025;
     }
     public static final class style {
         /** 

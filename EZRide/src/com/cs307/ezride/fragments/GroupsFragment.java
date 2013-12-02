@@ -1,5 +1,24 @@
 package com.cs307.ezride.fragments;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
 import com.cs307.ezride.R;
 import com.cs307.ezride.database.*;
 import com.loopj.android.http.AsyncHttpClient;
@@ -13,6 +32,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -235,6 +255,9 @@ public class GroupsFragment extends Fragment {
 			return true;
 		case R.id.fragment_groups_action_add:
 			onAddButtonClick();
+			return true;
+		case R.id.fragment_groups_action_add_events:
+			onAddEventsButtonClick();
 			return true;
 		default:
 			return super.onOptionsItemSelected(item);
@@ -501,6 +524,99 @@ public class GroupsFragment extends Fragment {
 				Log.d("GroupsFragment.response.fail", response);
 			}
 		});
+	}
+	
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	private void onAddEventsButtonClick() {
+		Log.d("onAddEventsButtonClick", PreferenceManager.getDefaultSharedPreferences(mActivity).getString("access_token", null));
+		final List<NameValuePair> param = new ArrayList<NameValuePair>();
+		//params.put("access_token", PreferenceManager.getDefaultSharedPreferences(mActivity).getString("access_token", null));
+		param.add(new BasicNameValuePair("access_token", PreferenceManager.getDefaultSharedPreferences(mActivity).getString("access_token", null)));
+		
+		AsyncTask task = new AsyncTask() {
+			@Override
+			protected InputStream doInBackground(Object... params) {
+				try {
+					URL url = new URL("https://www.googleapis.com/calendar/v3/users/me/calendarList");
+					HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+
+					// Create the SSL connection
+					SSLContext sc;
+					sc = SSLContext.getInstance("TLS");
+					sc.init(null, null, new java.security.SecureRandom());
+			    	conn.setSSLSocketFactory(sc.getSocketFactory());
+
+			    	// set Timeout and method
+			    	conn.setReadTimeout(7000);
+			    	conn.setConnectTimeout(7000);
+			    	conn.setRequestMethod("POST");
+			    	conn.setDoInput(true);
+			    	conn.setDoOutput(true);
+
+			    	// Add any data you wish to post here
+			    	OutputStream os = conn.getOutputStream();
+			    	BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+			    	writer.write(getQuery(param));
+			    	writer.flush();
+			    	writer.close();
+			    	os.close();
+
+			    	conn.connect();
+			    	return conn.getInputStream();
+				} catch (Exception e) {
+					return null;
+				}
+			}
+			
+			@Override
+			protected void onPostExecute(Object i) {
+				if (i != null) {
+					String result = new String();
+					InputStream is = (InputStream)i;
+					BufferedReader in = new BufferedReader(new InputStreamReader(is));
+					String line = null;
+					try {
+						line = in.readLine();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					while (line != null) {
+						result += line;
+						try {
+							line = in.readLine();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+							line = null;
+						}
+					}
+					
+					Log.d("onAddEventsButtonClick", result);
+				}
+			}
+		};
+		task.execute((Void)null);
+	}
+	
+	private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
+	{
+	    StringBuilder result = new StringBuilder();
+	    boolean first = true;
+
+	    for (NameValuePair pair : params)
+	    {
+	        if (first)
+	            first = false;
+	        else
+	            result.append("&");
+
+	        result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+	        result.append("=");
+	        result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+	    }
+
+	    return result.toString();
 	}
 
 }

@@ -12,5 +12,9 @@
         android:title="@string/action_create"
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_new" />
+    
+    <item
+        android:id="@+id/fragment_groups_action_add_events"
+        android:title="@string/action_add_events" />
 
 </menu>
